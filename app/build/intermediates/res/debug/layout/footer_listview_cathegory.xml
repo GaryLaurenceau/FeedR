@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_category_item"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_category_item"
+        android:id="@+id/footer_listview"
+        android:layout_gravity="center_vertical"
+        android:background="@color/blue"
+        android:src="@drawable/ic_add"
+        />
+
+</LinearLayout><!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/src/main/res/layout/footer_listview_cathegory.xml -->

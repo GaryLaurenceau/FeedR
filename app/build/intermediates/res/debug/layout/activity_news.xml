@@ -1,0 +1,21 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/news_view_pager"
+        />
+
+    <View
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/showcase_main_1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
+<!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/src/main/res/layout/activity_news.xml -->

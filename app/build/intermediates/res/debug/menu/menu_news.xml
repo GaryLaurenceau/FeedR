@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.sokss.feedr.app.NewsActivity">
+</menu>
+<!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/src/main/res/menu/menu_news.xml -->

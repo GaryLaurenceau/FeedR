@@ -1,0 +1,75 @@
+{
+    "cathegory_list": [
+        {
+            "color": 4,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "https:\/\/news.ycombinator.com\/rss",
+                    "name": "Hacker News - Y Combinator"
+                }
+            ],
+            "name": "Hacker News"
+        },
+        {
+            "color": 8,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/www.presse-citron.net\/feed\/",
+                    "name": "Presse-citron - L'actualité du Web et des nouvelles technologies"
+                }
+            ],
+            "name": "Presse citron"
+        },
+        {
+            "color": 1,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/feeds.mashable.com\/Mashable",
+                    "name": "TED Talks - Mashable"
+                },
+                {
+                    "news": [],
+                    "url": "http:\/\/feeds.feedburner.com\/tedtalks_video",
+                    "name": ""
+                }
+            ],
+            "name": "TED"
+        },
+        {
+            "color": 5,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/korben.info\/feed",
+                    "name": "Korben - Upgrade your mind"
+                }
+            ],
+            "name": "Korben"
+        },
+        {
+            "color": 3,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/techcrunch.com\/feed\/",
+                    "name": "TechCrunch - The latest technology news and information on startups"
+                }
+            ],
+            "name": "TechCrunch"
+        },
+        {
+            "color": 6,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/www.lemonde.fr\/rss\/une.xml",
+                    "name": "Le Monde.fr - Actualité à la Une"
+                }
+            ],
+            "name": "Le monde "
+        }
+    ]
+}

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/commons-collections4-4.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="da217367fd25e88df52ba79e47658d4cf928b0d1">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/commons-collections4-4.0-3ea5c2907de7d12ab77ded73086599b93b28909b.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics/2.2.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="7c9c3b5f5f093c43123e905d97d6a06373393afa">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-5aa0b8fcc163f738164a746cda3bfc7bfffb521b.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-7acb051b191b876792d88b8a6bf45049ba0de368.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/rome-1.0.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="8b4f0da455c59746435e987285b30c22b09ba18d">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/rome-1.0.0-f928aa4ad93c586203210bdbc765ccae1278657e.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/0.4.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="6ca319f998430aa20c4dde97ba6df213d6cf3dd0">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-7837d83c323f462d91594212d72adc477333b2e8.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/rome-fetcher-1.0.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="2047c45a2b550e0387de61b5d8b26f786536b1bd">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/rome-fetcher-1.0.0-b6180e2d98f7a787ba35bebf07db4bc77fc6dc66.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="06ca4ea902f14efb76284d918edb085df33cc365">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-c31a43d7c0b79c0933022f264764096de2282256.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="95fd37732ec852e99f07eeb516a3650172f1d136">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-a6a5e6d06b2ff123646a94f2a71b71b20cf2fa54.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/ormlite-core-4.48.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/ormlite-core-4.48-21be5299476bd54ab0bb13060aff6601783dca4a.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/hamcrest-core.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="42a25dc3219429f0e5d060061f71acb49bf010a0">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/hamcrest-core-a20adcbaf5633fb557c86020ee2245c5a70df90a.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/htmlcleaner-2.8.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="8cba4118e2b013ed26c53c654c6039e92fe5e915">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/htmlcleaner-2.8-0d16a2987bd089c0d877693ec4fd9c22cf779d47.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="2c2071dcaf7a008c3b01a6381a33be55396bab09">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-2fd2ddb16c151af4a0cd770ad0ab0edf39137e5e.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/jdom-1.1.1-android-fork.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="936e2a877cacca2108b619bbc718d1550299b106">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/jdom-1.1.1-android-fork-f28f8314672c23d1afadc3b7e8a6a1b528bc491e.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.crashlytics.sdk.android/answers/1.1.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="12a82f51a488d577e124fd6038ff3b533311d4b9">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-19431314511141a48d089a68ffd4238edda9448d.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.3/libs/internal_impl-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="0dcc55e70f7ebf7238fe2ec53f662eb378ab2668">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-0c7420eae4c3be74c7bf75fa1b9ec5529158370c.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.github.amlcurran.showcaseview/library/5.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="8b3d9a7b348d8bcfb4d740dfaf70bc374cdae9d6">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-4715a1ef78b188a7a9e9e05ce6671d6ab50b783d.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.fortysevendeg.swipelistview/swipelistview/1.0-SNAPSHOT/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="e4c70565b4247864e4577107e53f604de0ae56d3">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-81b76a5c1dacfde3f9410727cd2e1a492252c05e.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.crashlytics.sdk.android/beta/1.1.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="13fcdacaecfcce00c7dd129264d70da2ff195563">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-367179c8426e649b4a2ea32cc46d63516524e3d9.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-77dcebb208ad3266c42ffacf31a969edf3603e73.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/commons-io-2.4.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="b1b6ea3b7e4aa4f492509a4952029cd8e48019ad">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/commons-io-2.4-aaf56f58237075fbecbe062f4bc7ed9e87010fc8.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/io.fabric.sdk.android/fabric/1.1.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="bb47ba58ffd67d44cd9e5cc6761cac747b4a6acf">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-2fce03b758ba705827dca55795ec9389106878f7.jar" />
+    </item>
+    <item
+        jar="/Users/gary/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/library-2.4.0-8fe2de12e80d2be354f79b96d184a7665d558eca.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/android-rome-feed-reader-1.0.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="70658757391670c5368564d3e98bb8182a0980bc">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/android-rome-feed-reader-1.0.0-c1e9b044d71957f7069ce438927640a3245c559f.jar" />
+    </item>
+    <item
+        jar="/Users/gary/AndroidStudioProjects/FeedR/app/libs/ormlite-android-4.48.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="afa06f539a4026c10b247386312aa67404b80a16">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/ormlite-android-4.48-5104887e24fd21c01a15b42798d5966e0cea5aef.jar" />
+    </item>
+    <item
+        jar="/Applications/Android Studio 6.1.app/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.3/support-annotations-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
+        <dex dex="/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-5947a4341a8fffa2c76cc077b728f2486ea8c7b8.jar" />
+    </item>
+
+</items>

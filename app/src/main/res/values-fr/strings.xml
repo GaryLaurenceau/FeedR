@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FeedR</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!-- Menu -->
+    <string name="action_settings">Réglages</string>
+    <string name="action_add_category">Ajouter une cathégorie</string>
+    <string name="action_unread_all">Marquer tout les éléments comme non lu</string>
+    <string name="action_read_all">Marquer tout les éléments comme lu</string>
+    <string name="title_activity_feed">FeedActivity</string>
+
+    <!-- Main Actovoty -->
+    <string name="title_add_category">Nom de la catégorie</string>
+    <string name="choose_category_name">Choisisser un nom de catégorie</string>
+    <string name="name_already_use">Ce nom existe déjà</string>
+    <string name="update_category">Configurer</string>
+    <string name="delete_item_category">Supprimer</string>
+    <string name="update_item_category">Configurer</string>
+    <string name="all">Tous</string>
+
+    <!-- Feed Activity -->
+    <string name="feed_already_add">Ce flux a déjà été ajouté</string>
+    <string name="title_activity_news">NewsActivity</string>
+    <string name="title_activity_category">Nouvelle catégorie</string>
+    <string name="all_news_set_read">Toutes les éléments ont été marqués comme non lus</string>
+    <string name="all_news_set_unread">Toutes les éléments ont été marqués comme lus</string>
+
+    <!--Category Activity-->
+    <string name="save">Sauvegarder</string>
+    <string name="title_search_feed">Rechercher un flux</string>
+    <string name="exit_without_saving">Etes-vous sur de vouloir quitter sans sauvegarder?</string>
+    <string name="query_empty">La requête est vide</string>
+    <string name="choose_feed">Choisisser un flux</string>
+    <string name="wait">Attendez s\'il vous plais...</string>
+
+
+    <!--News Fragment-->
+    <string name="download_sharing_app">n\'est pas installé sur votre appareil\nVoulez-vous télécharger l\'application?</string>
+
+    <!--AppRater-->
+    <string name="rate">Noter</string>
+    <string name="remind_me_later">"Plus tard"</string>
+    <string name="no_thanks">"Non merci"</string>
+    <string name="rate_app">"Si vous avez aimé utiliser FeedR, notez nous sur le Play Store!"</string>
+
+    
+    <!--Credits-->
+    <!--<div>Icons made by Icons8 from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>         is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>-->
+
+</resources>

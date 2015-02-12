@@ -1,0 +1,121 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/red"
+        android:id="@+id/category_layout"
+        >
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/prev_color"
+            android:src="@drawable/prev_arrow"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:scaleType="fitCenter"
+            />
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_category_item"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_centerInParent="true"
+            android:hint="@string/choose_category_name"
+            android:textColorHint="@android:color/white"
+            android:background="#00000000"
+            android:textCursorDrawable="@null"
+            />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/next_color"
+            android:src="@drawable/next_arrow"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:scaleType="fitCenter"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/activity_horizontal_margin"
+            >
+
+            <EditText
+                android:id="@+id/query_feed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:hint="@string/title_search_feed"
+                />
+
+            <ImageView
+                android:id="@+id/query_send"
+                android:layout_gravity="center"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/ic_search"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:id="@+id/listview_feed"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:id="@+id/button_cancel"
+                android:layout_weight="1"
+                android:text="@android:string/cancel"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:background="@color/gray"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:id="@+id/button_save"
+                android:layout_weight="1"
+                android:text="@string/save"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:background="@color/blue"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

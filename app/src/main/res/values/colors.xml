@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="turqoize">#1abc9c</color>
+    <color name="green">#2ecc71</color>
+    <color name="blue">#3498db</color>
+    <color name="purple">#9b59b6</color>
+    <color name="asphalt">#34495e</color>
+    <color name="yellow">#f1c40f</color>
+    <color name="orange">#e67e22</color>
+    <color name="red">#e74c3c</color>
+    <color name="gray">#95a5a6</color>
+    <color name="main_color">@color/orange</color>
+    <color name="dark_gray">#333333</color>
+
+    <integer-array name="color_array">
+        <item>@color/blue</item>
+        <item>@color/red</item>
+        <item>@color/turqoize</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/asphalt</item>
+        <item>@color/purple</item>
+        <item>@color/gray</item>
+        <item>@color/yellow</item>
+        <item>@color/dark_gray</item>
+    </integer-array>
+
+    <color name="black_overlay">#66000000</color>
+
+</resources>

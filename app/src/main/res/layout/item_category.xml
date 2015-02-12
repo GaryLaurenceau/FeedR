@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/back"
+        android:tag="back"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_category_item"
+        >
+
+        <TextView
+            android:layout_width="85dp"
+            android:layout_height="@dimen/height_category_item"
+            android:id="@+id/update_category"
+            android:text="@string/update_item_category"
+            android:background="@android:color/darker_gray"
+            android:textColor="@android:color/white"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/delete_category"
+            android:padding="10dp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="85dp"
+            android:layout_height="@dimen/height_category_item"
+            android:id="@+id/delete_category"
+            android:text="@string/delete_item_category"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:gravity="center" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/front"
+        android:tag="front"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_category_item"
+        >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_category_item"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_category_item"
+                android:layout_weight="1"
+                android:id="@+id/cathegory_name"
+                android:text="All"
+                android:textColor="@android:color/white"
+                android:textSize="25sp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/count"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/circle"
+                android:text="10"
+                />
+
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>

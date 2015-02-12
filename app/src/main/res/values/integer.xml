@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="transition_time">400</integer>
+    <item type="id" name="action_read" />
+    <item type="id" name="action_unread" />
+
+    <array name="ring_arrays">
+        <item>@drawable/ring_1</item>
+        <item>@drawable/ring_2</item>
+        <item>@drawable/ring_3</item>
+        <item>@drawable/ring_4</item>
+        <item>@drawable/ring_5</item>
+        <item>@drawable/ring_6</item>
+        <item>@drawable/ring_7</item>
+        <item>@drawable/ring_8</item>
+        <item>@drawable/ring_9</item>
+        <item>@drawable/ring_10</item>
+        <item>@drawable/ring_11</item>
+    </array>
+
+</resources>

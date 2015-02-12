@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_category_item"
+        android:id="@+id/feed_name"
+        android:ellipsize="end"
+        android:padding="10dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        />
+
+</LinearLayout><!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/src/main/res/layout/item_feed_result.xml -->
