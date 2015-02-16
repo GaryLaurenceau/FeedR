@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Properties;
 
 import android.text.Html;
 import android.util.Log;
@@ -30,6 +31,7 @@ import android.util.Log;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndContent;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
+import com.sokss.feedr.app.opengraph.MetaElement;
 import com.sokss.feedr.app.opengraph.OpenGraph;
 
 import org.json.JSONException;
@@ -47,6 +49,7 @@ public class News implements Comparable<News> {
     private String mImageUrl = "";
     private Boolean mRead = false;
     private Boolean mOgTagParse = false;
+    private Feed mFeed = null;
 
     // private categpry;
 
@@ -188,15 +191,19 @@ public class News implements Comparable<News> {
         try {
             OpenGraph graph = new OpenGraph(mLink, true);
             String u = graph.getContent("image");
-            if (u != null)
+            if (u != null) {
+                // TODO handle ssl connection
+                if (u.startsWith("https"))
+                    u = "http" + u.substring(5);
                 mImageUrl = u;
+            }
             mOgTagParse = true;
         }
         catch (IOException ioe) {
             Log.e(TAG, ioe.toString());
         }
         catch (Exception e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -242,6 +249,14 @@ public class News implements Comparable<News> {
 
     public void setRead(Boolean read) {
         mRead = read;
+    }
+
+    public Feed getFeed() {
+        return mFeed;
+    }
+
+    public void setFeed(Feed feed) {
+        mFeed = feed;
     }
 
     @Override

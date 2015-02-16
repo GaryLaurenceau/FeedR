@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -155,6 +156,16 @@
                 <data android:mimeType="application/xml" />
             </intent-filter>
         </activity>
+
+        <!--Services-->
+        <service android:name="com.sokss.feedr.app.services.AlarmService" android:enabled="true" />
+        <receiver android:name="com.sokss.feedr.app.services.AlarmReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <!--CrashLytics-->
         <meta-data android:name="com.crashlytics.ApiKey" android:value="8ed3f8c1ed370ced31c40b0580df0fd4648039bc"/>
     </application>
 

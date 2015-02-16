@@ -3,6 +3,7 @@ package com.sokss.feedr.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,8 +65,12 @@ public class FeedUrlAdapter extends BaseAdapter {
         else
             holder = (ViewHolder) convertView.getTag();
 
-        if (mFeedList.get(position).getThumbnail() != null)
+        if (mFeedList.get(position).getThumbnail() != null) {
+            Log.d("thumbnail", mFeedList.get(position).getThumbnail());
             new ImageDownloader().applyImage(holder.thumbnail, mFeedList.get(position).getThumbnail());
+        }
+        else
+            Log.d("thumbnail", "null");
 
         holder.name.setText(Html.fromHtml(mFeedList.get(position).getName()));
         holder.url.setText(mFeedList.get(position).getUrl());

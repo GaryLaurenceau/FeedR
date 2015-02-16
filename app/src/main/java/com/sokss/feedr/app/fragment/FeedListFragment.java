@@ -1,9 +1,12 @@
 package com.sokss.feedr.app.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -13,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -27,21 +31,19 @@ import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
-import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.Target;
-import com.sokss.feedr.app.FeedActivity;
 import com.sokss.feedr.app.NewsActivity;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.adapter.FeedListAdapter;
-import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
 import com.sokss.feedr.app.model.News;
+import com.sokss.feedr.app.services.AlarmReceiver;
 import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.Serializer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,6 +63,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
 
     private Category mCategory;
     private int mPosition;
+
+    // Interval alarm
+    private Integer mIntervalAlarm = 0;
 
     // Ring action bar
     private Boolean mRead = true;
@@ -95,7 +100,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
 
         // Active action bar
         setHasOptionsMenu(true);
-//        displayShowcaseViewOne();
+        displayShowcaseViewOne();
+
+        setDefaultAlarm();
         return rootView;
     }
 
@@ -168,10 +175,11 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
                 if (newsList.size() > 0) {
                     mNewsList = newsList;
                     Collections.sort(mNewsList);
-                    mSerializer.saveContent(getActivity());
+                    mSerializer.saveCategory(getActivity(), mCategory);
                     mFeedListAdapter.setNewsList(mNewsList);
                     mFeedListAdapter.notifyDataSetChanged();
                     getActivity().invalidateOptionsMenu();
+                    displayShowcaseViewTwo();
                 }
                 mPullToRefreshLayout.setRefreshComplete();
             }
@@ -196,7 +204,7 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
     public void unread(boolean read) {
         for (News news : mNewsList)
             news.setRead(read);
-        mSerializer.saveContent(getActivity());
+        mSerializer.saveCategory(getActivity(), mCategory);
     }
 
     @Override
@@ -211,15 +219,21 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_feed, menu);
-        MenuItem item;
+        MenuItem itemAlarm;
+        MenuItem itemRead;
+        if (mCategory.getKey() >= 0) {
+            itemAlarm = menu.add(Menu.NONE, R.id.action_set_alarm, Menu.NONE, getResources().getString(R.string.action_set_alarm)).setIcon(R.drawable.ic_bell);
+            itemAlarm.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
         if (mCategory.isUnreadNews()) {
-            item = menu.add(Menu.NONE, R.id.action_unread, Menu.NONE, getResources().getString(R.string.action_read_all)).setIcon(R.drawable.ring_1);
+            itemRead = menu.add(Menu.NONE, R.id.action_unread, Menu.NONE, getResources().getString(R.string.action_read_all)).setIcon(R.drawable.ring_1);
             mRead = true;
-        } else {
-            item = menu.add(Menu.NONE, R.id.action_read, Menu.NONE, getResources().getString(R.string.action_unread_all)).setIcon(R.drawable.ring_11);
+        }
+        else {
+            itemRead = menu.add(Menu.NONE, R.id.action_read, Menu.NONE, getResources().getString(R.string.action_unread_all)).setIcon(R.drawable.ring_11);
             mRead = false;
         }
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        itemRead.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -230,6 +244,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
                 if (mDrawablePosition != 0)
                     return false;
                 fillRing(item);
+                return true;
+            case R.id.action_set_alarm:
+                popupSetAlarm();
                 return true;
             case android.R.id.home:
                 Intent returnIntent = new Intent();
@@ -274,108 +291,132 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
             showToast(getResources().getString(R.string.all_news_set_unread));
     }
 
-    private void displayShowcaseViewOne() {
-        try {
-            final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+    public void displayShowcaseViewOne() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
 
-            if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false)) {
-                displayShowcaseViewTwo();
-                return;
+                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
+                        return;
+
+                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false)) {
+                        displayShowcaseViewTwo();
+                        return;
+                    }
+
+                    Display display = getActivity().getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int width = size.x;
+                    ShowcaseView sv = new ShowcaseView.Builder(getActivity())
+                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_1))
+//                    .setTarget(new PointTarget(width / 2, 200))
+                            .setTarget(Target.NONE)
+                            .setStyle(R.style.CustomShowcaseTheme)
+                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                @Override
+                                public void onShowcaseViewShow(final ShowcaseView scv) {
+                                }
+
+                                @Override
+                                public void onShowcaseViewHide(final ShowcaseView scv) {
+                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_ONE, true).commit();
+                                    scv.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+                                }
+                            })
+                            .build();
+                } catch (Exception e) {
+                }
             }
-
-            Display display = getActivity().getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            int width = size.x;
-            ShowcaseView sv = new ShowcaseView.Builder(getActivity())
-                    .setContentTitle("Pull down to fetch news")
-                    .setTarget(new PointTarget(width / 2, 200))
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setShowcaseEventListener(new OnShowcaseEventListener() {
-                        @Override
-                        public void onShowcaseViewShow(final ShowcaseView scv) {
-                        }
-
-                        @Override
-                        public void onShowcaseViewHide(final ShowcaseView scv) {
-                            sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_ONE, true).commit();
-                            scv.setVisibility(View.GONE);
-                            displayShowcaseViewTwo();
-                        }
-
-                        @Override
-                        public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                        }
-                    })
-                    .build();
-        }
-        catch (Exception e) {}
+        }, 500);
     }
 
     private void displayShowcaseViewTwo() {
-        try {
-            final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
 
-            if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false)) {
-                displayShowcaseViewThree();
-                return;
+                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false))
+                        return;
+
+                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false)) {
+                        displayShowcaseViewThree();
+                        return;
+                    }
+
+                    new ShowcaseView.Builder(getActivity())
+                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_2))
+                            .setTarget(Target.NONE)
+                            .setStyle(R.style.CustomShowcaseTheme)
+                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                @Override
+                                public void onShowcaseViewShow(final ShowcaseView scv) {
+                                }
+
+                                @Override
+                                public void onShowcaseViewHide(final ShowcaseView scv) {
+                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_TWO, true).commit();
+                                    scv.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+                                }
+                            })
+                            .build();
+                } catch (Exception e) {
+                }
             }
-
-            new ShowcaseView.Builder(getActivity())
-                    .setContentTitle("Click on a row to view news")
-                    .setTarget(Target.NONE)
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setShowcaseEventListener(new OnShowcaseEventListener() {
-                        @Override
-                        public void onShowcaseViewShow(final ShowcaseView scv) {
-                        }
-
-                        @Override
-                        public void onShowcaseViewHide(final ShowcaseView scv) {
-                            sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_TWO, true).commit();
-                            scv.setVisibility(View.GONE);
-                            displayShowcaseViewThree();
-                        }
-
-                        @Override
-                        public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                        }
-                    })
-                    .build();
-        }
-        catch (Exception e) {}
+        }, 500);
     }
 
-    private void displayShowcaseViewThree() {
-        try {
-            final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+    public void displayShowcaseViewThree() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
 
-            if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_THREE, false)) {
-                return;
+                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false))
+                        return;
+
+                    else if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_THREE, false)) {
+                        return;
+                    }
+
+                    new ShowcaseView.Builder(getActivity())
+                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_3))
+//                    .setTarget(new ViewTarget(mCategory.isUnreadNews() ? R.id.action_read : R.id.action_unread, getActivity()))
+                            .setTarget(Target.NONE)
+                            .setStyle(R.style.CustomShowcaseTheme)
+                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                @Override
+                                public void onShowcaseViewShow(final ShowcaseView scv) {
+                                }
+
+                                @Override
+                                public void onShowcaseViewHide(final ShowcaseView scv) {
+                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_THREE, true).commit();
+                                    scv.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+                                }
+                            })
+                            .build();
+                } catch (Exception e) {
+                }
             }
-
-            new ShowcaseView.Builder(getActivity())
-                    .setContentTitle("Click on the circle to set all news as read or unread")
-                    .setTarget(new ActionItemTarget(getActivity(), mCategory.isUnreadNews() ? R.id.action_read : R.id.action_unread))
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setShowcaseEventListener(new OnShowcaseEventListener() {
-                        @Override
-                        public void onShowcaseViewShow(final ShowcaseView scv) {
-                        }
-
-                        @Override
-                        public void onShowcaseViewHide(final ShowcaseView scv) {
-                            sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_THREE, true).commit();
-                            scv.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                        }
-                    })
-                    .build();
-        }
-        catch (Exception e) {}
+        }, 500);
     }
 
     public int getPosition() {
@@ -397,5 +438,84 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
     private void showToast(String content) {
         if (getActivity() != null && content != null)
             Toast.makeText(getActivity(), content, Toast.LENGTH_SHORT).show();
+    }
+
+    private void popupSetAlarm() {
+        CharSequence[] choices = getResources().getStringArray(R.array.interval_time);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.choose_time_interval)
+                .setSingleChoiceItems(choices, mCategory.getInterval(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mIntervalAlarm = which;
+                    }
+                })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        mCategory.setInterval(mIntervalAlarm);
+                        mSerializer.saveCategory(getActivity(), mCategory);
+                        long interval = AlarmManager.INTERVAL_DAY;
+                        switch (mIntervalAlarm) {
+                            case 0:
+                                interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+                                break;
+                            case 1:
+                                interval = AlarmManager.INTERVAL_HALF_HOUR;
+                                break;
+                            case 2:
+                                interval = AlarmManager.INTERVAL_HOUR;
+                                break;
+                            case 3:
+                                interval = AlarmManager.INTERVAL_HALF_DAY;
+                                break;
+                            case 4:
+                                interval = AlarmManager.INTERVAL_DAY;
+                                break;
+                            case 5:
+                                interval = -1;
+                                break;
+                        }
+                        setAlarmReceiver(interval);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+        builder.create().show();
+    }
+
+    private void setAlarmReceiver(long interval) {
+        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+        intent.putExtra("category_key", mCategory.getKey());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), mCategory.getKey().intValue(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.HOUR, 1);
+        AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//        Calendar c = Calendar.getInstance();
+//        c.setTimeInMillis(System.currentTimeMillis());
+//        c.add(Calendar.SECOND, 10);
+        alarm.cancel(pendingIntent);
+        if (interval >= 0)
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, pendingIntent);
+//        alarm.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+    }
+
+    private void setDefaultAlarm() {
+        // Do not set alarm for "All" category
+        if (mCategory.getKey() < 0)
+            return;
+
+        // Do not set default alarm if it already sets
+        if (mCategory.getInterval() != -2)
+            return;
+
+        mCategory.setInterval(4);
+        setAlarmReceiver(AlarmManager.INTERVAL_DAY);
+        mSerializer.saveCategory(getActivity(), mCategory);
     }
 }

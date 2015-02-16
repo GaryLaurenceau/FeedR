@@ -1,8 +1,12 @@
 package com.sokss.feedr.app;
 
+import android.app.AlarmManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -10,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
@@ -19,13 +24,17 @@ import com.sokss.feedr.app.fragment.CategoryListFragment;
 import com.sokss.feedr.app.fragment.FeedListFragment;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
+import com.sokss.feedr.app.request.RequestManager;
+import com.sokss.feedr.app.services.AlarmReceiver;
 import com.sokss.feedr.app.utils.AppRater;
 import com.sokss.feedr.app.utils.ColorManager;
 import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.Serializer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -46,20 +55,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
-//        showcase();
-        AppRater.app_launched(this);
-        isFlushCacheNeeded();
-
+        mSerializer.getCategoriesFromPreferences(this);
         mCategoryListFragment = new CategoryListFragment();
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-
         ft.add(R.id.list_category, mCategoryListFragment);
-
-        mSerializer.getCategoriesFromPreferences(this);
 
         Category category = null;
         if (findViewById(R.id.list_feed) != null) {
@@ -71,7 +74,7 @@ public class MainActivity extends Activity {
 
             mFeedListFragment = new FeedListFragment();
             mFeedListFragment.setCategory(category);
-            mFeedListFragment.setPosition(0);
+            mFeedListFragment.setPosition(-1);
             ft.replace(R.id.list_feed, mFeedListFragment);
         }
         else
@@ -80,16 +83,33 @@ public class MainActivity extends Activity {
         ft.commit();
 
         if (mFeedListFragment != null)
-            mFeedListFragment.openCategory(category, 0);
+            mFeedListFragment.openCategory(category, -1);
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            Long categoryKey = getIntent().getExtras().getLong("category_key", -1L);
+            if (categoryKey >= 0) {
+                for (int i = 0; i < mSerializer.getCategories().size(); ++i)
+                    if (mSerializer.getCategories().get(i).getKey().equals(categoryKey))
+                        openCategory(i);
+            }
+        }
+
+        AppRater.app_launched(this);
+        isFlushCacheNeeded();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case Constants.LOADER_CATEGORY:
+                mCategoryListFragment.refreshCategory();
+                break;
             case Constants.LOADER_FEED:
+                mCategoryListFragment.refreshCategory();
+                break;
             case Constants.LOADER_NEWS:
                 mCategoryListFragment.refreshCategory();
+                mFeedListFragment.displayShowcaseViewThree();
                 break;
             default:
                 break;
@@ -97,19 +117,27 @@ public class MainActivity extends Activity {
         invalidateOptionsMenu();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mCategoryListFragment.refreshCategory();
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_read:
             case R.id.action_unread:
+                mFeedListFragment.onOptionsItemSelected(item);
                 mCategoryListFragment.refreshCategory();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void openCategory(int position) {
         if (mFeedListFragment != null) {
+            mFeedListFragment.displayShowcaseViewOne();
             mFeedListFragment.openCategory(position);
             invalidateOptionsMenu();
         }
@@ -154,42 +182,4 @@ public class MainActivity extends Activity {
             sharedPreferences.edit().putLong(Constants.DATE_LAST_LAUNCH, dateLastLaunch).commit();
         }
     }
-
-    private void showcase() {
-        displayShowcaseViewOne();
-    }
-
-    private void displayShowcaseViewOne() {
-        try {
-            final SharedPreferences sharedPreferences = getSharedPreferences(Constants.PROFILE_APP, MODE_PRIVATE);
-
-            if (sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
-                return;
-
-            new ShowcaseView.Builder(this)
-                    .setContentTitle("This is the list of your feeds\nCick on a feed to view news")
-                    .setTarget(Target.NONE)
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setShowcaseEventListener(new OnShowcaseEventListener() {
-                        @Override
-                        public void onShowcaseViewShow(final ShowcaseView scv) {
-                        }
-
-                        @Override
-                        public void onShowcaseViewHide(final ShowcaseView scv) {
-                            scv.setVisibility(View.GONE);
-                            sharedPreferences.edit().putBoolean(Constants.SHOWCASE_MAIN_ONE, true).commit();
-                        }
-
-                        @Override
-                        public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                        }
-                    })
-                    .build();
-        }
-        catch (Exception e) {
-        }
-    }
-
-
 }

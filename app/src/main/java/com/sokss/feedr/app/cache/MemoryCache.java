@@ -64,7 +64,6 @@ public class MemoryCache {
                 return;
             }
             if (diskCache.getBitmap(key) == null) {
-                Log.d("key", key);
                 diskCachePutBitmap(key, bitmap);
             }
         }

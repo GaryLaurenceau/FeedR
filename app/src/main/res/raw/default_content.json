@@ -1,55 +1,19 @@
 {
     "cathegory_list": [
         {
-            "color": 4,
-            "feeds": [
-                {
-                    "news": [],
-                    "url": "https:\/\/news.ycombinator.com\/rss",
-                    "name": "Hacker News - Y Combinator"
-                }
-            ],
-            "name": "Hacker News"
-        },
-        {
-            "color": 8,
-            "feeds": [
-                {
-                    "news": [],
-                    "url": "http:\/\/www.presse-citron.net\/feed\/",
-                    "name": "Presse-citron - L'actualité du Web et des nouvelles technologies"
-                }
-            ],
-            "name": "Presse citron"
-        },
-        {
+            "key":3,
             "color": 1,
             "feeds": [
                 {
                     "news": [],
                     "url": "http:\/\/feeds.mashable.com\/Mashable",
                     "name": "TED Talks - Mashable"
-                },
-                {
-                    "news": [],
-                    "url": "http:\/\/feeds.feedburner.com\/tedtalks_video",
-                    "name": ""
                 }
             ],
             "name": "TED"
         },
         {
-            "color": 5,
-            "feeds": [
-                {
-                    "news": [],
-                    "url": "http:\/\/korben.info\/feed",
-                    "name": "Korben - Upgrade your mind"
-                }
-            ],
-            "name": "Korben"
-        },
-        {
+            "key":5,
             "color": 3,
             "feeds": [
                 {
@@ -61,15 +25,40 @@
             "name": "TechCrunch"
         },
         {
+            "key":7,
             "color": 6,
             "feeds": [
                 {
                     "news": [],
-                    "url": "http:\/\/www.lemonde.fr\/rss\/une.xml",
-                    "name": "Le Monde.fr - Actualité à la Une"
+                    "url": "http:\/\/www.nytimes.com\/services\/xml\/rss\/nyt\/HomePage.xml",
+                    "name": "New York Times Home Page"
                 }
             ],
-            "name": "Le monde "
+            "name": "New York Times"
+        },
+        {
+            "key":8,
+            "color": 2,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/feeds.feedburner.com\/dezeen",
+                    "name": "Dezen"
+                }
+            ],
+            "name": "Dezen"
+        },
+        {
+            "key":9,
+            "color": 4,
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/www.theverge.com\/rss\/frontpage",
+                    "name": "The Verge | Front Page"
+                }
+            ],
+            "name": "The Verge"
         }
     ]
 }

@@ -4,6 +4,7 @@
     <integer name="transition_time">400</integer>
     <item type="id" name="action_read" />
     <item type="id" name="action_unread" />
+    <item type="id" name="action_set_alarm" />
 
     <array name="ring_arrays">
         <item>@drawable/ring_1</item>

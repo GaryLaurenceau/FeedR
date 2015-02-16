@@ -92,6 +92,7 @@ public class CategoryActivity extends Activity {
 
         if (mCategory == null) {
             mCategory = new Category();
+            mCategory.setKey(System.currentTimeMillis());
             mCategory.setColor(mColorManager.getRandomColor());
         }
 
@@ -183,7 +184,7 @@ public class CategoryActivity extends Activity {
                 if (position == -1) {
                     mSerializer.getCategories().add(mCategory);
                 }
-                mSerializer.saveContent(CategoryActivity.this);
+                mSerializer.saveCategory(CategoryActivity.this, mCategory);
                 finish();
             }
         });

@@ -52,16 +52,32 @@ public class Serializer {
                 byte[] b = new byte[in_s.available()];
                 in_s.read(b);
                 categoryString = new String(b);
-            } catch (Exception e) {
-            }
-        }
-
-        if (categoryString != null) {
-            try {
                 JSONObject data = new JSONObject(categoryString);
                 JSONArray array = data.getJSONArray("cathegory_list");
                 for (int i = 0; i < array.length(); ++i) {
+                    Log.d(TAG, array.get(i).toString());
                     mCathegories.add(new Category(array.getJSONObject(i)));
+                }
+                saveContent(context);
+            }
+            catch (IOException ioe) {
+                Log.e(TAG, ioe.toString());
+            }
+            catch (JSONException je) {
+                Log.e(TAG, categoryString);
+                Log.e(TAG, je.toString());
+            }
+        }
+
+        else {
+            try {
+                JSONArray array = new JSONArray(categoryString);
+                for (int i = 0; i < array.length(); ++i) {
+                    String category = sharedPreferences.getString(array.getString(i), null);
+                    if (category == null)
+                        continue;
+                    JSONObject data = new JSONObject(category);
+                    mCathegories.add(new Category(data));
                 }
             }
             catch (JSONException je) {
@@ -75,22 +91,48 @@ public class Serializer {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        JSONObject data = new JSONObject();
         JSONArray array = new JSONArray();
 
-        try {
-            for (Category c : mCathegories)
-                array.put(c.toJSON());
-            data.put("cathegory_list", array);
+        for (int i = 0; i < mCathegories.size(); ++i) {
+            Category category = mCathegories.get(i);
+            String key = getKeyFromName(category.getKey());
+            array.put(key);
+            editor.putString(key, category.toJSON().toString());
         }
-        catch (JSONException je) {
-            Log.e(TAG, je.toString());
-        }
-        catch (OutOfMemoryError oom) {
-            System.gc();
-        }
-        editor.putString(Constants.CATHEGORIES, data.toString());
+        editor.putString(Constants.CATHEGORIES, array.toString());
         editor.commit();
+    }
+
+    public void saveCategory(Context context, Category category) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        JSONArray array = new JSONArray();
+
+        String key;
+        if (category != null) {
+            if (category.getKey() < 0) {
+                for (Category c : mCathegories) {
+                    key = getKeyFromName(c.getKey());
+                    editor.putString(key, c.toJSON().toString());
+                }
+            }
+            else {
+                key = getKeyFromName(category.getKey());
+                editor.putString(key, category.toJSON().toString());
+            }
+        }
+        for (int i = 0; i < mCathegories.size(); ++i) {
+            Category c = mCathegories.get(i);
+            key = getKeyFromName(c.getKey());
+            array.put(key);
+        }
+        editor.putString(Constants.CATHEGORIES, array.toString());
+        editor.commit();
+    }
+
+    private String getKeyFromName(Long key) {
+        return key.toString();
     }
 
     public void saveContentToFile(Context context, String fileName) {
@@ -103,7 +145,6 @@ public class Serializer {
             for (Category c : mCathegories)
                 array.put(c.toJSON());
             data.put("cathegory_list", array);
-            Log.d(TAG, data.toString());
 
             FileWriter fw = new FileWriter(Environment.getExternalStorageDirectory() + "/" + fileName + ".txt", false);
             fw.append(data.toString(4));

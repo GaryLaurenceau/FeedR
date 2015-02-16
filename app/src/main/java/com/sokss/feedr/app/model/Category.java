@@ -16,14 +16,13 @@ public class Category {
 
     private static final String TAG = "com.sokss.feedr.app.model.Cathegory";
 
-    private String mName;
-    private List<Feed> mFeeds;
-    private int mColor;
+    private Long mKey = -1L;
+    private String mName = "";
+    private List<Feed> mFeeds = new ArrayList<Feed>();
+    private int mColor = 0;
+    private Integer mInterval = -2;
 
     public Category() {
-        mName = "";
-        mFeeds = new ArrayList<Feed>();
-        mColor = 1;
     }
 
     public Category(String name, List<Feed> feeds) {
@@ -33,32 +32,47 @@ public class Category {
 
     public Category(JSONObject data) {
         try {
+            mKey = data.optLong("key", 0);
             mName = data.getString("name");
             mFeeds = new ArrayList<Feed>();
             JSONArray array = data.getJSONArray("feeds");
             for (int i = 0; i < array.length(); ++i)
                 mFeeds.add(new Feed(array.getJSONObject(i), this));
             mColor = data.getInt("color");
+            mInterval = data.optInt("interval", 0);
         }
         catch (JSONException je) {
             Log.e(TAG, je.toString());
+            Log.e(TAG, data.toString());
+            je.printStackTrace();
         }
     }
 
     public JSONObject toJSON() {
         JSONObject data = new JSONObject();
         try {
+            data.put("key", mKey);
             data.put("name", mName);
             JSONArray feeds = new JSONArray();
             for (Feed f : mFeeds)
                 feeds.put(f.toJSON());
             data.put("feeds", feeds);
             data.put("color", mColor);
+            data.put("interval", mInterval);
         }
         catch (JSONException je) {
             Log.e(TAG, je.toString());
+            je.printStackTrace();
         }
         return data;
+    }
+
+    public Long getKey() {
+        return mKey;
+    }
+
+    public void setKey(Long key) {
+        mKey = key;
     }
 
     public String getName() {
@@ -83,6 +97,14 @@ public class Category {
 
     public void setColor(int color) {
         mColor = color;
+    }
+
+    public Integer getInterval() {
+        return mInterval;
+    }
+
+    public void setInterval(Integer interval) {
+        mInterval = interval;
     }
 
     public List<News> getNewsList() {

@@ -3,11 +3,18 @@ package com.sokss.feedr.app.opengraph;
 /**
  * Created by gary on 19/12/14.
  */
+import android.util.Log;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -61,12 +68,14 @@ public class OpenGraph {
         this();
         isImported = true;
 
+        if (url.startsWith("https"))
+            url = "http" + url.substring(5);
 
         // download the (X)HTML content, but only up to the closing head tag. We do not want to waste resources parsing irrelevant content
-        URL pageURL = new URL(url);
-        URLConnection siteConnection = pageURL.openConnection();
-        Charset charset = getConnectionCharset(siteConnection);
-        BufferedReader dis = new BufferedReader(new InputStreamReader(siteConnection.getInputStream(), charset));
+        HttpGet httpGet = new HttpGet(url);
+        HttpResponse response = new DefaultHttpClient().execute(httpGet);
+        InputStream is = response.getEntity().getContent();
+        BufferedReader dis = new BufferedReader(new InputStreamReader(is));
         String inputLine;
         StringBuffer headContents = new StringBuffer();
 
@@ -177,8 +186,8 @@ public class OpenGraph {
         }
 
         // read the original page url
-        URL realURL = siteConnection.getURL();
-        pageUrl = realURL.toExternalForm();
+//        URL realURL = siteConnection.getURL();
+//        pageUrl = realURL.toExternalForm();
     }
 
     /**

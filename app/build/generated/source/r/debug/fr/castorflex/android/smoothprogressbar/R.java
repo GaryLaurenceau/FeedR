@@ -37,17 +37,17 @@ public final class R {
 		public static final int spb_default_stroke_width = 0x7f0a0035;
 	}
 	public static final class id {
-		public static final int spb_interpolator_accelerate = 0x7f0b0025;
-		public static final int spb_interpolator_acceleratedecelerate = 0x7f0b0026;
-		public static final int spb_interpolator_decelerate = 0x7f0b0027;
-		public static final int spb_interpolator_linear = 0x7f0b0028;
+		public static final int spb_interpolator_accelerate = 0x7f0b0026;
+		public static final int spb_interpolator_acceleratedecelerate = 0x7f0b0027;
+		public static final int spb_interpolator_decelerate = 0x7f0b0028;
+		public static final int spb_interpolator_linear = 0x7f0b0029;
 	}
 	public static final class integer {
 		public static final int spb_default_interpolator = 0x7f0c0001;
 		public static final int spb_default_sections_count = 0x7f0c0002;
 	}
 	public static final class string {
-		public static final int spb_default_speed = 0x7f06002b;
+		public static final int spb_default_speed = 0x7f060032;
 	}
 	public static final class style {
 		public static final int SmoothProgressBar = 0x7f0d0079;

@@ -11,6 +11,8 @@ public class Constants {
     public static final String DATE_LAST_LAUNCH = "DATE_LAST_LAUNCH";
     public static final Integer DAYS_UNTIL_CLEAR = 14;
 
+    public static final String SALT = "98765432_";
+
     // LOADER
     public static final int LOADER_CATEGORY = 1;
     public static final int LOADER_FEED = 2;

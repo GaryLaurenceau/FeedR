@@ -1,7 +1,5 @@
 package com.sokss.feedr.app.request;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.sokss.feedr.app.cache.MemoryCache;
@@ -17,7 +15,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.net.URLEncoder;
 
 /**

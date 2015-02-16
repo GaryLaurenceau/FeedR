@@ -68,16 +68,16 @@ public class CategoryAdapter extends BaseAdapter {
 
         Category category = mCathegories.get(position);
         Integer size = category.getNewsListUnread();
+        int color = mColorManager.getColors()[category.getColor()];
         holder.name.setText(category.getName());
         if (size > 0) {
-            holder.count.setTextColor(mColorManager.getColors()[category.getColor()]);
+            holder.count.setTextColor(color);
             holder.count.setText(size.toString());
             holder.count.setVisibility(View.VISIBLE);
         }
         else {
             holder.count.setVisibility(View.GONE);
         }
-        int color = mColorManager.getColors()[category.getColor()];
         mColorManager.applyColorBackgroundRoundCorner(mContext, holder.front, color);
         mColorManager.applyColorBackgroundRoundCorner(mContext, convertView, color);
 

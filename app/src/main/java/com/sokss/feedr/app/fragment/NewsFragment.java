@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.util.TypedValue;
@@ -39,6 +40,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import com.sokss.feedr.app.fadeActionBar.NotifyingScrollView;
+import com.sokss.feedr.app.utils.Utils;
 
 /**
  * Created by gary on 25/11/14.
@@ -178,7 +180,8 @@ public class NewsFragment extends Fragment {
 
     private void setNewsContent() {
         loadImage();
-        mContent.setText(Html.fromHtml(mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent(), new URLImageParser(mContent, getActivity()), null));
+        Spanned html = Html.fromHtml(mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent(), new URLImageParser(mContent, getActivity()), null);
+        mContent.setText(Utils.trimTrailingWhitespace(html));
 
         mImageHeader.setImageDrawable(getResources().getDrawable(R.drawable.header_news));
         mImageHeader.setColorFilter(mColor);

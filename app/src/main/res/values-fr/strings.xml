@@ -9,6 +9,7 @@
     <string name="action_add_category">Ajouter une cathégorie</string>
     <string name="action_unread_all">Marquer tout les éléments comme non lu</string>
     <string name="action_read_all">Marquer tout les éléments comme lu</string>
+    <string name="action_set_alarm">Configurer l\'alarme</string>
     <string name="title_activity_feed">FeedActivity</string>
 
     <!-- Main Actovoty -->
@@ -26,6 +27,16 @@
     <string name="title_activity_category">Nouvelle catégorie</string>
     <string name="all_news_set_read">Toutes les éléments ont été marqués comme non lus</string>
     <string name="all_news_set_unread">Toutes les éléments ont été marqués comme lus</string>
+    <string name="choose_time_interval">Selectionnez l\'interval de temps pour télécharger de nouvelles news</string>
+
+    <string-array name="interval_time">
+        <item>toutes les 15 minutes</item>
+        <item>toutes les 30 minutes</item>
+        <item>une fois par heure</item>
+        <item>deux fois par jour</item>
+        <item>une fois par jour</item>
+        <item>jamais</item>
+    </string-array>
 
     <!--Category Activity-->
     <string name="save">Sauvegarder</string>
@@ -45,8 +56,16 @@
     <string name="no_thanks">"Non merci"</string>
     <string name="rate_app">"Si vous avez aimé utiliser FeedR, notez nous sur le Play Store!"</string>
 
-    
+    <!--Showcase-->
+    <string name="category_list_showcase_1">Cet écran liste vos catégories\nCliquez sur un item pour accéder aux news</string>
+    <string name="feed_list_showcase_1">Tirez de haut en bas pour récupérer les dernières news</string>
+    <string name="feed_list_showcase_2">Cliquez sur un item pour voir la news</string>
+    <string name="feed_list_showcase_3">Cliquez sur le cercle\ndans le coin à droite\npour passer toutes les news\nen lu ou non lu</string>
+    <string name="news_list_showcase_1">Pour naviguer de news en news,\nglisser de droite à gauche</string>
+
     <!--Credits-->
     <!--<div>Icons made by Icons8 from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>         is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>-->
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

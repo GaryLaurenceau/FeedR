@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import com.sokss.feedr.app.adapter.NewsFragmentPagerAdapter;
 import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
+import com.sokss.feedr.app.model.News;
 import com.sokss.feedr.app.utils.ColorManager;
 import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.Serializer;
@@ -42,7 +44,9 @@ public class NewsActivity extends Activity {
 
     private NewsFragmentPagerAdapter mNewsPagerAdapter;
 
+    // Data
     private Category mCategory;
+    private Integer mNewsPosition;
 
     private Drawable mActionBarBackgroundDrawable;
 
@@ -52,7 +56,7 @@ public class NewsActivity extends Activity {
         setContentView(R.layout.activity_news);
 
         int cathegoryPosition = getIntent().getIntExtra("cathegory_position", 0);
-        Integer newsPosition = getIntent().getIntExtra("news_position", 0);
+        mNewsPosition = getIntent().getIntExtra("news_position", 0);
 
         mColorManager = new ColorManager(this);
 
@@ -71,7 +75,7 @@ public class NewsActivity extends Activity {
 
         mNewsPagerAdapter = new NewsFragmentPagerAdapter(getFragmentManager(), mCategory.getNewsList(), mColorManager.getColors()[mCategory.getColor()]);
         mNewsViewPager.setAdapter(mNewsPagerAdapter);
-        mNewsViewPager.setCurrentItem(newsPosition);
+        mNewsViewPager.setCurrentItem(mNewsPosition);
         mNewsViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
@@ -87,12 +91,9 @@ public class NewsActivity extends Activity {
 
             }
         });
-
         getActionBar().setTitle(mCategory.getName());
-
         displayShowcaseViewOne();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,7 +117,7 @@ public class NewsActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        mSerializer.saveContent(NewsActivity.this);
+        mSerializer.saveCategory(this, mCategory);
     }
 
     @Override
@@ -141,36 +142,38 @@ public class NewsActivity extends Activity {
     }
 
     private void displayShowcaseViewOne() {
-        try {
-        final SharedPreferences sharedPreferences = getSharedPreferences(Constants.PROFILE_APP, MODE_PRIVATE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final SharedPreferences sharedPreferences = getSharedPreferences(Constants.PROFILE_APP, MODE_PRIVATE);
 
-        if (sharedPreferences.getBoolean(Constants.SHOWCASE_NEWS_ONE, false))
-            return;
+                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_NEWS_ONE, false))
+                        return;
 
-        new ShowcaseView.Builder(this)
-                .setContentTitle("Swipe to left or right\n to switch to other aticles")
-                .setTarget(Target.NONE)
-                .setStyle(R.style.CustomShowcaseTheme)
-                .setShowcaseEventListener(new OnShowcaseEventListener() {
-                    @Override
-                    public void onShowcaseViewShow(final ShowcaseView scv) {
-                    }
+                    new ShowcaseView.Builder(NewsActivity.this)
+                            .setContentTitle(getResources().getString(R.string.news_list_showcase_1))
+                            .setTarget(Target.NONE)
+                            .setStyle(R.style.CustomShowcaseTheme)
+                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                @Override
+                                public void onShowcaseViewShow(final ShowcaseView scv) {
+                                }
 
-                    @Override
-                    public void onShowcaseViewHide(final ShowcaseView scv) {
-                        sharedPreferences.edit().putBoolean(Constants.SHOWCASE_NEWS_ONE, true).commit();
-                        scv.setVisibility(View.GONE);
-                    }
+                                @Override
+                                public void onShowcaseViewHide(final ShowcaseView scv) {
+                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_NEWS_ONE, true).commit();
+                                    scv.setVisibility(View.GONE);
+                                }
 
-                    @Override
-                    public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                    }
-                })
-                .build();        }
-        catch (Exception e) {
-
-        }
-
+                                @Override
+                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+                                }
+                            })
+                            .build();
+                } catch (Exception e) {}
+            }
+        }, 500);
     }
 
     public boolean isFragmentNeedBeLoaded(int position) {

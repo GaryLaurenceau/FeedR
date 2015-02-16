@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class Feed {
     private String mUrl = "";
     private List<News> mNewsList = new ArrayList<News>();
     private Category mCategory;
-    private String thumbnail;
+    private String mThumbnail;
 
     public Feed() {
 
@@ -52,7 +53,7 @@ public class Feed {
             JSONArray array = data.getJSONArray("news");
             for (int i = 0; i < array.length(); ++i)
                 mNewsList.add(new News(array.getJSONObject(i)));
-
+            mThumbnail = data.optString("thumbnail", null);
             mCategory = category;
         }
         catch (JSONException je) {
@@ -69,6 +70,7 @@ public class Feed {
             for (News n : mNewsList)
                 news.put(n.toJSON());
             data.put("news", news);
+            data.put("thumbnail", mThumbnail);
         }
         catch (JSONException je) {
             Log.e(TAG, je.toString());
@@ -109,11 +111,11 @@ public class Feed {
     }
 
     public String getThumbnail() {
-        return thumbnail;
+        return mThumbnail;
     }
 
     public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
+        this.mThumbnail = thumbnail;
     }
 
     public int getNewsListUnread() {
@@ -141,20 +143,22 @@ public class Feed {
             XmlReader reader = null;
             try {
                 reader = new XmlReader(url);
+                // TODO get icon
                 SyndFeed feed = new SyndFeedInput().build(reader);
 
                 if (feed.getImage() != null)
-                    thumbnail = feed.getImage().getUrl();
+                    mThumbnail = feed.getImage().getUrl();
 
                 for (Iterator i = feed.getEntries().iterator(); i.hasNext(); ) {
                     SyndEntry entry = (SyndEntry) i.next();
                     News news = new News(entry, feed);
+                    news.setFeed(this);
                     if (mNewsList.contains(news)) {
                         news.setRead(mNewsList.get(mNewsList.indexOf(news)).getRead());
                     }
                     newsListFeed.add(news);
                     ++max;
-                    if (max > 20)
+                    if (max >= 20)
                         break;
                 }
                 Collections.sort(newsListFeed);

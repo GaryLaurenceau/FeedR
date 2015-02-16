@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/src/main/res/values-fr/strings.xml -->
+    <eat-comment/>
+    <string-array name="interval_time">
+        <item>toutes les 15 minutes</item>
+        <item>toutes les 30 minutes</item>
+        <item>une fois par heure</item>
+        <item>deux fois par jour</item>
+        <item>une fois par jour</item>
+        <item>jamais</item>
+    </string-array>
     <!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/res/values-fr/values.xml -->
     <eat-comment/>
     <string msgid="4600421777120114993" name="abc_action_bar_home_description">"Revenir à l\'accueil"</string>
@@ -21,20 +31,28 @@
     <eat-comment/>
     <string name="action_add_category">Ajouter une cathégorie</string>
     <string name="action_read_all">Marquer tout les éléments comme lu</string>
+    <string name="action_set_alarm">Configurer l\'alarme</string>
     <string name="action_settings">Réglages</string>
     <string name="action_unread_all">Marquer tout les éléments comme non lu</string>
     <string name="all">Tous</string>
     <string name="all_news_set_read">Toutes les éléments ont été marqués comme non lus</string>
     <string name="all_news_set_unread">Toutes les éléments ont été marqués comme lus</string>
     <string name="app_name">FeedR</string>
+    <string name="category_list_showcase_1">Cet écran liste vos catégories\nCliquez sur un item pour accéder aux news</string>
     <string name="choose_category_name">Choisisser un nom de catégorie</string>
     <string name="choose_feed">Choisisser un flux</string>
+    <string name="choose_time_interval">Selectionnez l\'interval de temps pour télécharger de nouvelles news</string>
     <string name="delete_item_category">Supprimer</string>
     <string name="download_sharing_app">n\'est pas installé sur votre appareil\nVoulez-vous télécharger l\'application?</string>
     <string name="exit_without_saving">Etes-vous sur de vouloir quitter sans sauvegarder?</string>
     <string name="feed_already_add">Ce flux a déjà été ajouté</string>
+    <string name="feed_list_showcase_1">Tirez de haut en bas pour récupérer les dernières news</string>
+    <string name="feed_list_showcase_2">Cliquez sur un item pour voir la news</string>
+    <string name="feed_list_showcase_3">Cliquez sur le cercle\ndans le coin à droite\npour passer toutes les news\nen lu ou non lu</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_world">Hello world!</string>
     <string name="name_already_use">Ce nom existe déjà</string>
+    <string name="news_list_showcase_1">Pour naviguer de news en news,\nglisser de droite à gauche</string>
     <string name="no_thanks">"Non merci"</string>
     <!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-fr/values.xml -->
     <eat-comment/>

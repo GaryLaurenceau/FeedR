@@ -9,6 +9,7 @@
     <string name="action_add_category">Add category</string>
     <string name="action_unread_all">Mark all as unread</string>
     <string name="action_read_all">Mark all as read</string>
+    <string name="action_set_alarm">Set alarm</string>
     <string name="title_activity_feed">FeedActivity</string>
 
     <!-- Main Actovoty -->
@@ -26,6 +27,16 @@
     <string name="title_activity_category">New category</string>
     <string name="all_news_set_read">All news has been marked as read</string>
     <string name="all_news_set_unread">All news has been marked as unread</string>
+    <string name="choose_time_interval">Set time interval to fetch new data</string>
+
+    <string-array name="interval_time">
+        <item>every 15 minutes</item>
+        <item>every 30 minutes</item>
+        <item>hourly</item>
+        <item>twice a day</item>
+        <item>once a day</item>
+        <item>never</item>
+    </string-array>
 
     <!-- Category Activity -->
     <string name="save">Save</string>
@@ -43,6 +54,13 @@
     <string name="rate_app">"If you enjoy using FeedR, please take a moment to rate it. Thanks for your support!"</string>
     <string name="remind_me_later">"Remind me later"</string>
     <string name="no_thanks">"No, thanks"</string>
+
+    <!--Showcase-->
+    <string name="category_list_showcase_1">This is the list of your feeds\nCick on a feed to view news</string>
+    <string name="feed_list_showcase_1">Pull down to fetch news</string>
+    <string name="feed_list_showcase_2">Click on a row to view news</string>
+    <string name="feed_list_showcase_3">Click on the circle\nin the right corner\nto set all news as read or unread</string>
+    <string name="news_list_showcase_1">Swipe to left or right\n to switch to other aticles</string>
 
     <!-- Credits -->
     <!-- <div>Icons made by Icons8 from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>         is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div> -->

@@ -51,15 +51,15 @@ public final class R {
 		public static final int spb_default_stroke_width = 0x7f0a0035;
 	}
 	public static final class id {
-		public static final int inside = 0x7f0b0023;
-		public static final int outside = 0x7f0b0024;
-		public static final int ptr_content = 0x7f0b0009;
-		public static final int ptr_progress = 0x7f0b000a;
-		public static final int ptr_text = 0x7f0b000b;
-		public static final int spb_interpolator_accelerate = 0x7f0b0025;
-		public static final int spb_interpolator_acceleratedecelerate = 0x7f0b0026;
-		public static final int spb_interpolator_decelerate = 0x7f0b0027;
-		public static final int spb_interpolator_linear = 0x7f0b0028;
+		public static final int inside = 0x7f0b0024;
+		public static final int outside = 0x7f0b0025;
+		public static final int ptr_content = 0x7f0b000a;
+		public static final int ptr_progress = 0x7f0b000b;
+		public static final int ptr_text = 0x7f0b000c;
+		public static final int spb_interpolator_accelerate = 0x7f0b0026;
+		public static final int spb_interpolator_acceleratedecelerate = 0x7f0b0027;
+		public static final int spb_interpolator_decelerate = 0x7f0b0028;
+		public static final int spb_interpolator_linear = 0x7f0b0029;
 	}
 	public static final class integer {
 		public static final int spb_default_interpolator = 0x7f0c0001;
@@ -69,10 +69,10 @@ public final class R {
 		public static final int default_header = 0x7f03001d;
 	}
 	public static final class string {
-		public static final int pull_to_refresh_pull_label = 0x7f060023;
-		public static final int pull_to_refresh_refreshing_label = 0x7f060024;
-		public static final int pull_to_refresh_release_label = 0x7f060025;
-		public static final int spb_default_speed = 0x7f06002b;
+		public static final int pull_to_refresh_pull_label = 0x7f06002a;
+		public static final int pull_to_refresh_refreshing_label = 0x7f06002b;
+		public static final int pull_to_refresh_release_label = 0x7f06002c;
+		public static final int spb_default_speed = 0x7f060032;
 	}
 	public static final class style {
 		public static final int SmoothProgressBar = 0x7f0d0079;

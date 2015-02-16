@@ -30,8 +30,12 @@ uses-permission#android.permission.ACCESS_WIFI_STATE
 ADDED from AndroidManifest.xml:8:5
 	android:name
 		ADDED from AndroidManifest.xml:8:22
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from AndroidManifest.xml:9:5
+	android:name
+		ADDED from AndroidManifest.xml:9:22
 application
-ADDED from AndroidManifest.xml:10:5
+ADDED from AndroidManifest.xml:11:5
 MERGED from com.android.support:appcompat-v7:21.0.0:16:5
 MERGED from com.android.support:support-v4:21.0.3:16:5
 MERGED from com.android.support:support-v4:21.0.3:16:5
@@ -49,81 +53,97 @@ MERGED from io.fabric.sdk.android:fabric:1.1.1:9:5
 MERGED from com.crashlytics.sdk.android:beta:1.1.1:9:5
 MERGED from io.fabric.sdk.android:fabric:1.1.1:9:5
 	android:label
-		ADDED from AndroidManifest.xml:14:9
-	android:hardwareAccelerated
-		ADDED from AndroidManifest.xml:12:9
-	android:allowBackup
-		ADDED from AndroidManifest.xml:11:9
-	android:icon
-		ADDED from AndroidManifest.xml:13:9
-	android:theme
 		ADDED from AndroidManifest.xml:15:9
+	android:hardwareAccelerated
+		ADDED from AndroidManifest.xml:13:9
+	android:allowBackup
+		ADDED from AndroidManifest.xml:12:9
+	android:icon
+		ADDED from AndroidManifest.xml:14:9
+	android:theme
+		ADDED from AndroidManifest.xml:16:9
 activity#com.sokss.feedr.app.MainActivity
-ADDED from AndroidManifest.xml:18:9
+ADDED from AndroidManifest.xml:19:9
 	android:label
+		ADDED from AndroidManifest.xml:21:13
+	android:name
 		ADDED from AndroidManifest.xml:20:13
-	android:name
-		ADDED from AndroidManifest.xml:19:13
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from AndroidManifest.xml:22:13
+ADDED from AndroidManifest.xml:23:13
 action#android.intent.action.MAIN
-ADDED from AndroidManifest.xml:23:17
-	android:name
-		ADDED from AndroidManifest.xml:23:25
-category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:24:17
 	android:name
-		ADDED from AndroidManifest.xml:24:27
+		ADDED from AndroidManifest.xml:24:25
+category#android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:25:17
+	android:name
+		ADDED from AndroidManifest.xml:25:27
 activity#com.sokss.feedr.app.FeedActivity
-ADDED from AndroidManifest.xml:28:9
+ADDED from AndroidManifest.xml:29:9
 	android:label
-		ADDED from AndroidManifest.xml:30:13
-	android:parentActivityName
 		ADDED from AndroidManifest.xml:31:13
+	android:parentActivityName
+		ADDED from AndroidManifest.xml:32:13
 	android:name
-		ADDED from AndroidManifest.xml:29:13
+		ADDED from AndroidManifest.xml:30:13
 activity#com.sokss.feedr.app.NewsActivity
-ADDED from AndroidManifest.xml:35:9
+ADDED from AndroidManifest.xml:36:9
 	android:label
-		ADDED from AndroidManifest.xml:37:13
-	android:parentActivityName
-		ADDED from AndroidManifest.xml:39:13
-	android:theme
 		ADDED from AndroidManifest.xml:38:13
-	android:name
-		ADDED from AndroidManifest.xml:36:13
-activity#com.sokss.feedr.app.CategoryActivity
-ADDED from AndroidManifest.xml:43:9
-	android:label
-		ADDED from AndroidManifest.xml:45:13
 	android:parentActivityName
+		ADDED from AndroidManifest.xml:40:13
+	android:theme
+		ADDED from AndroidManifest.xml:39:13
+	android:name
+		ADDED from AndroidManifest.xml:37:13
+activity#com.sokss.feedr.app.CategoryActivity
+ADDED from AndroidManifest.xml:44:9
+	android:label
 		ADDED from AndroidManifest.xml:46:13
+	android:parentActivityName
+		ADDED from AndroidManifest.xml:47:13
 	android:name
-		ADDED from AndroidManifest.xml:44:13
+		ADDED from AndroidManifest.xml:45:13
 intent-filter#android.intent.action.VIEW+android.intent.category.BROWSABLE+android.intent.category.DEFAULT
-ADDED from AndroidManifest.xml:48:13
+ADDED from AndroidManifest.xml:49:13
 action#android.intent.action.VIEW
-ADDED from AndroidManifest.xml:49:17
+ADDED from AndroidManifest.xml:50:17
 	android:name
-		ADDED from AndroidManifest.xml:49:25
+		ADDED from AndroidManifest.xml:50:25
 category#android.intent.category.BROWSABLE
-ADDED from AndroidManifest.xml:51:17
-	android:name
-		ADDED from AndroidManifest.xml:51:27
-category#android.intent.category.DEFAULT
 ADDED from AndroidManifest.xml:52:17
 	android:name
 		ADDED from AndroidManifest.xml:52:27
-data
-ADDED from AndroidManifest.xml:54:17
-	android:scheme
-		ADDED from AndroidManifest.xml:54:23
-meta-data#com.crashlytics.ApiKey
-ADDED from AndroidManifest.xml:158:9
-	android:value
-		ADDED from AndroidManifest.xml:158:58
+category#android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:53:17
 	android:name
-		ADDED from AndroidManifest.xml:158:20
+		ADDED from AndroidManifest.xml:53:27
+data
+ADDED from AndroidManifest.xml:55:17
+	android:scheme
+		ADDED from AndroidManifest.xml:55:23
+service#com.sokss.feedr.app.services.AlarmService
+ADDED from AndroidManifest.xml:161:9
+	android:enabled
+		ADDED from AndroidManifest.xml:161:75
+	android:name
+		ADDED from AndroidManifest.xml:161:18
+receiver#com.sokss.feedr.app.services.AlarmReceiver
+ADDED from AndroidManifest.xml:162:9
+	android:name
+		ADDED from AndroidManifest.xml:162:19
+intent-filter#android.intent.action.BOOT_COMPLETED
+ADDED from AndroidManifest.xml:163:13
+action#android.intent.action.BOOT_COMPLETED
+ADDED from AndroidManifest.xml:164:17
+	android:name
+		ADDED from AndroidManifest.xml:164:25
+meta-data#com.crashlytics.ApiKey
+ADDED from AndroidManifest.xml:169:9
+	android:value
+		ADDED from AndroidManifest.xml:169:58
+	android:name
+		ADDED from AndroidManifest.xml:169:20
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from com.android.support:appcompat-v7:21.0.0:15:5

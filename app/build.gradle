@@ -25,7 +25,7 @@ android {
         applicationId "com.sokss.feedr.app"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 7
+        versionCode 8
         versionName "1.0"
     }
     buildTypes {
@@ -66,6 +66,7 @@ dependencies {
     }
     compile files('libs/hamcrest-core.jar')
     compile files('libs/htmlcleaner-2.8.jar')
+
 
     // Sugar ORM for database management
 //    compile 'com.github.satyan:sugar:1.3'
