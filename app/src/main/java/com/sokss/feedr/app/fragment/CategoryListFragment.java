@@ -76,12 +76,18 @@ public class CategoryListFragment extends Fragment {
         // Footer list view
         mFooterView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_listview_cathegory, null, false);
         mListViewCathegory.addFooterView(mFooterView, null, false);
-        mFooterView.setOnClickListener(new View.OnClickListener() {
+        mFooterView.findViewById(R.id.favorite).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addCategory();
+                openCategory(-2);
             }
         });
+//        mFooterView.findViewById(R.id.footer_listview).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                addCategory();
+//            }
+//        });
 
         // Configure ListView adapter
         mCategoryAdapter = new CategoryAdapter(getActivity(), mSerializer.getCategories());
@@ -101,17 +107,17 @@ public class CategoryListFragment extends Fragment {
         mListViewCathegory.setSwipeListViewListener(new SwipeListener() {
             @Override
             public void onClickFrontView(int position) {
-                if (position - 1 >= mSerializer.getCategories().size())
-                    addCategory();
-                else
+//                if (position - 1 >= mSerializer.getCategories().size())
+//                    addCategory();
+//                else
                     openCategory(position - 1);
             }
         });
     }
 
-    private void addCategory() {
-        ((MainActivity)getActivity()).addCategory();
-    }
+//    private void addCategory() {
+//        ((MainActivity)getActivity()).addCategory();
+//    }
 
     private void openCategory(final int position) {
         ((MainActivity)getActivity()).openCategory(position);
@@ -132,13 +138,14 @@ public class CategoryListFragment extends Fragment {
     }
 
     public void refreshCategory() {
-        mListViewCathegory.closeOpenedItems();
-        mCategoryAdapter.setCathegories(mSerializer.getCategories());
         updateHeaderView();
+        mCategoryAdapter.setCathegories(mSerializer.getCategories());
         mCategoryAdapter.notifyDataSetChanged();
+        mListViewCathegory.closeOpenedItems();
     }
 
     private void updateHeaderView() {
+        View useless = (View) mHeaderView.findViewById(R.id.useless);
         TextView count = (TextView) mHeaderView.findViewById(R.id.count);
         Integer size = 0;
         for (Category c : mSerializer.getCategories())
@@ -146,9 +153,11 @@ public class CategoryListFragment extends Fragment {
         if (size > 0) {
             count.setTextColor(getResources().getColor(R.color.dark_gray));
             count.setText(size.toString());
+            useless.setVisibility(View.INVISIBLE);
             count.setVisibility(View.VISIBLE);
         }
         else {
+            useless.setVisibility(View.GONE);
             count.setVisibility(View.GONE);
         }
     }

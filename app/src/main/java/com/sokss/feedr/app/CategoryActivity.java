@@ -2,6 +2,8 @@ package com.sokss.feedr.app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +12,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -116,6 +119,8 @@ public class CategoryActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
         return super.onOptionsItemSelected(item);
     }
 
@@ -160,17 +165,37 @@ public class CategoryActivity extends Activity {
             }
         });
 
+        // Set listener to handler key enter button and set focus on query feed edittext
+        mCategoryName.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    mQueryFeed.clearFocus();
+                    mQueryFeed.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // Set listener to handler key enter button and launch request
+        mQueryFeed.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    mQueryFeed.clearFocus();
+                    processRequest();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         // Set listener for query edit text
         mQuerySend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mQueryFeed.getText().length() > 0) {
-                    findFeed(mQueryFeed.getText().toString());
-                    showLoadingPopup();
-                }
-                else
-                    showToast(getResources().getString(R.string.query_empty));
-                closeKeyBoard(mQueryFeed);
+                processRequest();
             }
         });
 
@@ -210,6 +235,28 @@ public class CategoryActivity extends Activity {
                 alert.show();
             }
         });
+
+        // Feed url adapter on item click
+        mFeedListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("rss_url", mCategory.getFeeds().get(position).getUrl());
+                clipboard.setPrimaryClip(clip);
+                showToast(getResources().getString(R.string.url_copy_to_clipboard));
+                return true;
+            }
+        });
+    }
+
+    private void processRequest() {
+        if (mQueryFeed.getText().length() > 0) {
+            showLoadingPopup();
+            findFeed(mQueryFeed.getText().toString());
+        }
+        else
+            showToast(getResources().getString(R.string.query_empty));
+        closeKeyBoard(mQueryFeed);
     }
 
     public void deleteFeedUrl(int position) {
@@ -221,22 +268,27 @@ public class CategoryActivity extends Activity {
         new AsyncTask<Void, Void, JSONObject>() {
             @Override
             protected JSONObject doInBackground(Void... params) {
+                if (android.util.Patterns.WEB_URL.matcher(query).matches())
+                    return null;
                 return new RequestManager().getFindResult(query);
             }
 
             @Override
             protected void onPostExecute(JSONObject data) {
                 try {
+                    List<Feed> feedList = new ArrayList<Feed>();
                     if (mAlertLoading != null)
                         mAlertLoading.dismiss();
-                    if (data == null || data.getInt("responseStatus") != Constants.CODE_SUCCESS)
+                    if (data == null || data.getInt("responseStatus") != Constants.CODE_SUCCESS) {
+                        createMultipleChoiceDialog(feedList);
                         return;
+                    }
                     JSONArray array = data.getJSONObject("responseData").getJSONArray("entries");
-                    List<Feed> feedList = new ArrayList<Feed>();
                     for (int i = 0; i < array.length(); ++i) {
                         Feed feed = new Feed();
                         feed.setName(array.getJSONObject(i).getString("title"));
                         feed.setUrl(array.getJSONObject(i).getString("url"));
+                        feed.setThumbnail(Constants.GOOGLE_URL_FAVICON + feed.getUrl());
                         if (!mCategory.isFeedAlreadyAdd(feed))
                             feedList.add(feed);
                     }
@@ -268,10 +320,8 @@ public class CategoryActivity extends Activity {
                     .setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Feed feed = new Feed();
-                            feed.setUrl(mQueryFeed.getText().toString());
-                            feed.setCategory(mCategory);
-                            mCategory.getFeeds().add(new Feed(mQueryFeed.getText().toString(), new ArrayList<News>(), mCategory));
+                            Feed feed = new Feed(mQueryFeed.getText().toString(), new ArrayList<News>(), mCategory);
+                            mCategory.getFeeds().add(feed);
                             mFeedUrlAdapter.notifyDataSetChanged();
                             adapter.notifyDataSetChanged();
                             dialog.dismiss();
@@ -284,7 +334,12 @@ public class CategoryActivity extends Activity {
                         }
                     })
                     .create();
-            dialog.show();
+            try {
+                dialog.show();
+            }
+            catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
         }
         else {
             final FeedResultAdapter adapter = new FeedResultAdapter(this, feedList);
@@ -316,10 +371,17 @@ public class CategoryActivity extends Activity {
             mAlertLoading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.wait));
+        builder.setCancelable(true);
         builder.setView(new ProgressBar(this));
-        builder.setCancelable(false);
 
         mAlertLoading = builder.create();
         mAlertLoading.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
     }
 }

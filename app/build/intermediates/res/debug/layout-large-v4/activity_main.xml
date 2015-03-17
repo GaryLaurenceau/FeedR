@@ -9,12 +9,12 @@
     >
 
     <FrameLayout
-        android:id="@+id/list_category"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="40"
-        android:name="com.sokss.feedr.app.fragment.BlankFragment"
-        tools:layout="@layout/fragment_category_list"/>
+        android:layout_weight="40">
+
+        <include layout="@layout/main_category_list"/>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/list_feed"

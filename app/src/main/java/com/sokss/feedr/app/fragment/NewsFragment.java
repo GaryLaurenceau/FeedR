@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -13,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.util.Linkify;
@@ -21,6 +23,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -28,6 +34,7 @@ import android.widget.TextView;
 
 import com.sokss.feedr.app.NewsActivity;
 import com.sokss.feedr.app.R;
+import com.sokss.feedr.app.ViewImageActivity;
 import com.sokss.feedr.app.model.News;
 import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.ImageDownloader;
@@ -36,6 +43,7 @@ import com.sokss.feedr.app.utils.URLImageParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.XMLReader;
 
 import java.util.List;
 
@@ -61,10 +69,11 @@ public class NewsFragment extends Fragment {
     // News view
     private ImageView mImageHeader;
     private TextView mTitle;
+    private WebView mWebView;
     private TextView mContent;
     private TextView mLink;
     private TextView mDate;
-    private ProgressBar mProgressBarContent;
+//    private ProgressBar mProgressBarContent;
 
     // Zoom buttom
     private ImageView mZoomIn;
@@ -100,7 +109,7 @@ public class NewsFragment extends Fragment {
 
         if (savedInstanceState != null) {
             try {
-                mNews = new News(new JSONObject(savedInstanceState.getString("news", "{}")));
+                mNews = new News(new JSONObject(savedInstanceState.getString("news", "{}")), null);
                 mColor = savedInstanceState.getInt("color", 0);
             }
             catch (JSONException je) {
@@ -111,17 +120,20 @@ public class NewsFragment extends Fragment {
         // Get UI
         mImageHeader = (ImageView) mView.findViewById(R.id.image_header);
         mTitle = (TextView) mView.findViewById(R.id.news_title);
+        mWebView = (WebView) mView.findViewById(R.id.webview);
         mContent = (TextView) mView.findViewById(R.id.news_content);
         mLink = (TextView) mView.findViewById(R.id.news_link);
         mDate = (TextView) mView.findViewById(R.id.news_date);
         mZoomIn = (ImageView) mView.findViewById(R.id.zoom_plus);
         mZoomOut = (ImageView) mView.findViewById(R.id.zoom_minus);
-        mProgressBarContent = (ProgressBar) mView.findViewById(R.id.progress_bar_content);
+//        mProgressBarContent = (ProgressBar) mView.findViewById(R.id.progress_bar_content);
 
         configureActionBar();
 
         setNewsContent();
         setShareButtons();
+
+
         return mView;
     }
 
@@ -133,11 +145,14 @@ public class NewsFragment extends Fragment {
     private NotifyingScrollView.OnScrollChangedListener mOnScrollChangedListener = new NotifyingScrollView.OnScrollChangedListener() {
         public void onScrollChanged(ScrollView who, int l, int t, int oldl, int oldt) {
             final int headerHeight = mImageHeader.getHeight() - mNewsActivity.getActionBarFromFragment().getHeight();
-            final float ratio = (float) Math.min(Math.max(t, 0), headerHeight) / headerHeight;
+            final Float ratio = (float) Math.min(Math.max(t, 0), headerHeight) / headerHeight;
             final Integer newAlpha = (int) (ratio * 255);
             mNewsActivity.getActionBarBackgroundDrawable().setAlpha(newAlpha);
-
             setActionBarTextAlpha(newAlpha);
+//            mImageHeader.setPadding(0, t / 2, 0, 0);
+//            android.view.ViewGroup.LayoutParams layoutParams = mImageHeader.getLayoutParams();
+//            layoutParams.height += (t - oldt);
+//            mImageHeader.setLayoutParams(layoutParams);
         }
     };
 
@@ -180,7 +195,24 @@ public class NewsFragment extends Fragment {
 
     private void setNewsContent() {
         loadImage();
-        Spanned html = Html.fromHtml(mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent(), new URLImageParser(mContent, getActivity()), null);
+
+////        mWebView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+////        String content = mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent();
+////        Utils.trimTrailingWhitespace(content);
+
+//        mWebView.setWebViewClient(new WebViewClient());
+//        mWebView.setWebChromeClient(new WebChromeClient());
+//        mWebView.getSettings().setJavaScriptEnabled(true);
+//        mWebView.getSettings().setAppCacheEnabled(true);
+//        mWebView.getSettings().setBuiltInZoomControls(false);
+//        mWebView.getSettings().setSaveFormData(true);
+//        mWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
+//        mWebView.loadData("<iframe width='200' height='143' src='http://www.youtube.com/embed/JW5meKfy3fY' frameborder='0' allowfullscreen></iframe>", "text/html", "utf-8");
+
+        String content = mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent();
+        Log.d("BASE_HTML", content);
+        Spanned html = Html.fromHtml(content, new URLImageParser(mContent, getActivity()), new MyTaghandler());
+        Log.d("HTML", html.toString());
         mContent.setText(Utils.trimTrailingWhitespace(html));
 
         mImageHeader.setImageDrawable(getResources().getDrawable(R.drawable.header_news));
@@ -204,6 +236,17 @@ public class NewsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 zoom(-2f);
+            }
+        });
+
+        mImageHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity() == null)
+                    return;
+                Intent intent = new Intent(getActivity(), ViewImageActivity.class);
+                intent.putExtra("bitmap_url", mNews.getImageUrl());
+                startActivity(intent);
             }
         });
     }
@@ -232,7 +275,13 @@ public class NewsFragment extends Fragment {
                             @Override
                             public void run() {
                                 if (bitmap != null && mImageHeader != null) {
-                                    mImageHeader.setImageBitmap(bitmap);
+                                    try {
+                                        mImageHeader.setImageBitmap(createSquaredBitmap(bitmap));
+                                    }
+                                    catch (OutOfMemoryError ooe) {
+                                        System.gc();
+                                        Log.e(TAG, ooe.toString());
+                                    }
                                     mImageHeader.setColorFilter(null);
                                 }
                             }
@@ -243,6 +292,17 @@ public class NewsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private Bitmap createSquaredBitmap(Bitmap srcBmp) {
+        int dim = Math.min(srcBmp.getWidth(), srcBmp.getHeight());
+        Bitmap dstBmp = Bitmap.createBitmap(dim, dim, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(dstBmp);
+        canvas.drawColor(Color.BLACK);
+        canvas.drawBitmap(srcBmp, (dim - srcBmp.getWidth()) / 2, (dim - srcBmp.getHeight()) / 2, null);
+
+        return dstBmp;
     }
 
     private void zoom(float z) {
@@ -265,25 +325,25 @@ public class NewsFragment extends Fragment {
         mShareFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initShareIntent("facebook", mNews.getTitle(), mNews.getDescription(), "com.facebook.katana", R.drawable.ic_facebook);
+                initShareIntent("facebook", mNews.getTitle(), Html.fromHtml(mNews.getDescription()).toString(), "com.facebook.katana", R.drawable.ic_facebook);
             }
         });
         mShareLinkedin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initShareIntent("linkedin", mNews.getTitle(), mNews.getDescription(), "com.linkedin.android", R.drawable.ic_linkedin);
+                initShareIntent("linkedin", mNews.getTitle(), Html.fromHtml(mNews.getDescription()).toString(), "com.linkedin.android", R.drawable.ic_linkedin);
             }
         });
         mShareBufferapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initShareIntent("buffer", mNews.getTitle(), mNews.getLink(), "org.buffer.android", R.drawable.ic_bufferapp);
+                initShareIntent("buffer", mNews.getTitle(), mNews.getTitle(), "org.buffer.android", R.drawable.ic_bufferapp);
             }
         });
         mShareTwitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initShareIntent("twitter", mNews.getTitle(), mNews.getLink(), "com.twitter.android", R.drawable.ic_twitter);
+                initShareIntent("twitter", mNews.getTitle(), mNews.getTitle(), "com.twitter.android", R.drawable.ic_twitter);
             }
         });
         mShareAll.setOnClickListener(new View.OnClickListener() {
@@ -300,7 +360,7 @@ public class NewsFragment extends Fragment {
         share.setType("text/plain");
 
         // Add feedr link to the content
-        content += " " + Constants.BITLINK;
+        content += " " + mNews.getLink() + " " + Constants.BITLINK;
 
         List<ResolveInfo> resInfo = getActivity().getPackageManager().queryIntentActivities(share, 0);
         if (!resInfo.isEmpty()){
@@ -353,5 +413,13 @@ public class NewsFragment extends Fragment {
                 .create();
 
         dialog.show();
+    }
+
+    private class MyTaghandler implements Html.TagHandler {
+        @Override
+        public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+            Log.d(TAG, tag);
+            Log.d(TAG, opening ? "opening" : "closing");
+        }
     }
 }

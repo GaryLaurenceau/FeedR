@@ -1,5 +1,6 @@
 package com.sokss.feedr.app.model;
 
+import android.app.AlarmManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -49,13 +50,17 @@ public class Category {
     }
 
     public JSONObject toJSON() {
+        return toJSON(true);
+    }
+
+    public JSONObject toJSON(boolean saveNews) {
         JSONObject data = new JSONObject();
         try {
             data.put("key", mKey);
             data.put("name", mName);
             JSONArray feeds = new JSONArray();
             for (Feed f : mFeeds)
-                feeds.put(f.toJSON());
+                feeds.put(f.toJSON(saveNews));
             data.put("feeds", feeds);
             data.put("color", mColor);
             data.put("interval", mInterval);
@@ -105,6 +110,25 @@ public class Category {
 
     public void setInterval(Integer interval) {
         mInterval = interval;
+    }
+
+    public long getIntervalValue() {
+//        if (mInterval == -1)
+//            return -1;
+//        if (true)
+//            return 60000;
+        switch (mInterval) {
+            case 0:
+                return AlarmManager.INTERVAL_HOUR;
+            case 1:
+                return AlarmManager.INTERVAL_HALF_DAY;
+            case 2:
+                return AlarmManager.INTERVAL_DAY;
+            case -1:
+                return -1;
+            default:
+                return AlarmManager.INTERVAL_HALF_DAY;
+        }
     }
 
     public List<News> getNewsList() {

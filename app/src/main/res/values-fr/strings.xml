@@ -3,6 +3,7 @@
 
     <string name="app_name">FeedR</string>
     <string name="hello_world">Hello world!</string>
+    <string name="favorite">Favoris</string>
 
     <!-- Menu -->
     <string name="action_settings">Réglages</string>
@@ -10,6 +11,8 @@
     <string name="action_unread_all">Marquer tout les éléments comme non lu</string>
     <string name="action_read_all">Marquer tout les éléments comme lu</string>
     <string name="action_set_alarm">Configurer l\'alarme</string>
+    <string name="action_star">Ajouter à la liste des favoris</string>
+    <string name="action_filter">Filtrer</string>
     <string name="title_activity_feed">FeedActivity</string>
 
     <!-- Main Actovoty -->
@@ -20,23 +23,29 @@
     <string name="delete_item_category">Supprimer</string>
     <string name="update_item_category">Configurer</string>
     <string name="all">Tous</string>
+    <string name="credits">Crédits</string>
 
     <!-- Feed Activity -->
     <string name="feed_already_add">Ce flux a déjà été ajouté</string>
     <string name="title_activity_news">NewsActivity</string>
-    <string name="title_activity_category">Nouvelle catégorie</string>
+    <string name="title_activity_category">Ajouter une catégorie</string>
     <string name="all_news_set_read">Toutes les éléments ont été marqués comme non lus</string>
     <string name="all_news_set_unread">Toutes les éléments ont été marqués comme lus</string>
     <string name="choose_time_interval">Selectionnez l\'interval de temps pour télécharger de nouvelles news</string>
+    <string name="filter_hint">Filtrer</string>
 
     <string-array name="interval_time">
-        <item>toutes les 15 minutes</item>
-        <item>toutes les 30 minutes</item>
-        <item>une fois par heure</item>
-        <item>deux fois par jour</item>
-        <item>une fois par jour</item>
-        <item>jamais</item>
+        <!--<item>toutes les 15 minutes</item>-->
+        <!--<item>toutes les 30 minutes</item>-->
+        <item>Toutes les heures</item>
+        <item>Deux fois par jour</item>
+        <item>Une fois par jour</item>
+        <item>Jamais</item>
     </string-array>
+
+    <!-- News Activity -->
+    <string name="add_to_favorite">a été ajouté au favoris</string>
+    <string name="remove_from_favorite">Supprimer des favoris</string>
 
     <!--Category Activity-->
     <string name="save">Sauvegarder</string>
@@ -45,7 +54,7 @@
     <string name="query_empty">La requête est vide</string>
     <string name="choose_feed">Choisisser un flux</string>
     <string name="wait">Attendez s\'il vous plais...</string>
-
+    <string name="url_copy_to_clipboard">Url copiée</string>
 
     <!--News Fragment-->
     <string name="download_sharing_app">n\'est pas installé sur votre appareil\nVoulez-vous télécharger l\'application?</string>
@@ -54,18 +63,23 @@
     <string name="rate">Noter</string>
     <string name="remind_me_later">"Plus tard"</string>
     <string name="no_thanks">"Non merci"</string>
-    <string name="rate_app">"Si vous avez aimé utiliser FeedR, notez nous sur le Play Store!"</string>
+    <string name="rate_app">"Si vous avez aimé utiliser FeedR, notez l'application sur le Play Store. Merci pour votre soutient"</string>
 
     <!--Showcase-->
     <string name="category_list_showcase_1">Cet écran liste vos catégories\nCliquez sur un item pour accéder aux news</string>
-    <string name="feed_list_showcase_1">Tirez de haut en bas pour récupérer les dernières news</string>
-    <string name="feed_list_showcase_2">Cliquez sur un item pour voir la news</string>
+    <string name="feed_list_showcase_1">Tirez de haut en bas pour\nrécupérer les dernières news</string>
+    <string name="feed_list_showcase_2">Cliquez sur un item pour\nvoir la news</string>
     <string name="feed_list_showcase_3">Cliquez sur le cercle\ndans le coin à droite\npour passer toutes les news\nen lu ou non lu</string>
     <string name="news_list_showcase_1">Pour naviguer de news en news,\nglisser de droite à gauche</string>
 
-    <!--Credits-->
-    <!--<div>Icons made by Icons8 from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>         is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>-->
+    <!-- Credits -->
+    <string name="credit_the_noun_project_title">Merci au site <a href="http://thenounproject.com">The Noun Project</a> grace au quel j\'ai pu trouver ces icones:</string>
+    <string name="credit_tnp_authors">La cloche par Juliette Wagner\nL\'étaoile par Edward Boatman\nLa main par Herbert Spencer</string>
+    <string name="credit_library_title">Je remercie égelement les développeurs de ces librairies que j\'ai trouvé sur <a href="http://github.com">GitHub</a> et que j\'utilise pour cette application:</string>
+    <string name="credit_libraries"><a href="https://github.com/amlcurran/ShowcaseView">ShowcaseView</a> par Amlcurran\n<a href="https://github.com/futuresimple/android-floating-action-button">android-floating-action-button</a> par Futursimple\n<a href="https://github.com/47deg/android-swipelistview">android-swipelistview</a> par 47deg</string>
+    <string name="share_app">Télécharger FeedR - News Feed Reader https://play.google.com/store/apps/details?id=com.sokss.feedr.app</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_view_image">ViewImageActivity</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

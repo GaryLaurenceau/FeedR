@@ -5,6 +5,18 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/empty"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/pull_to_refresh_pull_label"
+        android:textSize="23sp"
+        android:textColor="@color/dark_gray"
+        />
+
     <uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
         android:id="@+id/pull_to_refresh_layout"
         android:layout_width="match_parent"

@@ -4,6 +4,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -46,7 +50,9 @@ public class NewsActivity extends Activity {
 
     // Data
     private Category mCategory;
+    private List<News> mNewsList;
     private Integer mNewsPosition;
+    private String mFilterQuery;
 
     private Drawable mActionBarBackgroundDrawable;
 
@@ -57,29 +63,44 @@ public class NewsActivity extends Activity {
 
         int cathegoryPosition = getIntent().getIntExtra("cathegory_position", 0);
         mNewsPosition = getIntent().getIntExtra("news_position", 0);
+        mFilterQuery = getIntent().getStringExtra("filter_query");
 
         mColorManager = new ColorManager(this);
 
         List<Category> tmp = mSerializer.getCategories();
-        if (cathegoryPosition < 0) {
+        if (cathegoryPosition == -1) {
             List<Feed> feeds = new ArrayList<Feed>();
             for (Category category : tmp) {
                 feeds.addAll(category.getFeeds());
             }
             mCategory = new Category("All", feeds);
         }
+        else if (cathegoryPosition == -2) {
+            mCategory = mSerializer.getFavorite();
+        }
         else
             mCategory = tmp.get(cathegoryPosition);
 
         mNewsViewPager = (ViewPager) findViewById(R.id.news_view_pager);
 
-        mNewsPagerAdapter = new NewsFragmentPagerAdapter(getFragmentManager(), mCategory.getNewsList(), mColorManager.getColors()[mCategory.getColor()]);
+        if (mFilterQuery != null && mFilterQuery.length() > 0) {
+            mNewsList = new ArrayList<News>();
+            for (News news : mCategory.getNewsList()) {
+                if (news.matchQuery(mFilterQuery))
+                    mNewsList.add(news);
+            }
+        }
+        else
+            mNewsList = mCategory.getNewsList();
+
+        mNewsPagerAdapter = new NewsFragmentPagerAdapter(getFragmentManager(), mNewsList, mColorManager.getColors()[mCategory.getColor()]);
         mNewsViewPager.setAdapter(mNewsPagerAdapter);
         mNewsViewPager.setCurrentItem(mNewsPosition);
         mNewsViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
                 mNewsPagerAdapter.getNewsList().get(i).setRead(true);
+                invalidateOptionsMenu();
             }
 
             @Override
@@ -97,21 +118,44 @@ public class NewsActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_news, menu);
+        MenuItem item = menu.findItem(R.id.action_star_news);
+        News current = mNewsPagerAdapter.getNewsList().get(mNewsViewPager.getCurrentItem());
+        if (mSerializer.getFavorite().getNewsList().contains(current)) {
+            item.setIcon(getResources().getDrawable(R.drawable.ic_star));
+            item.setTitle(getResources().getString(R.string.remove_from_favorite));
+        }
+        else {
+            item.setIcon(getResources().getDrawable(R.drawable.ic_star_uncheck));
+            item.setTitle(getResources().getString(R.string.action_star));
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Intent returnIntent = new Intent();
-            setResult(RESULT_OK, returnIntent);
-            finish();
-            overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
+                finish();
+                overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
+                return true;
+            case R.id.action_star_news:
+                News current = mNewsPagerAdapter.getNewsList().get(mNewsViewPager.getCurrentItem());
+                if (mSerializer.getFavorite().getNewsList().contains(current)) {
+                    mSerializer.removeNewsToFavorite(this, current);
+                    showToast(getResources().getString(R.string.remove_from_favorite));
+                }
+                else {
+                    mSerializer.addNewsToFavorite(this, current);
+                    showToast('"' + current.getTitle() + "\" " + getResources().getString(R.string.add_to_favorite));
+                }
+                invalidateOptionsMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -178,6 +222,11 @@ public class NewsActivity extends Activity {
 
     public boolean isFragmentNeedBeLoaded(int position) {
         return (mNewsViewPager.getCurrentItem() - 1) <= position && (mNewsViewPager.getCurrentItem() + 1) >= position;
+    }
+
+    private void showToast(String text) {
+        if (text != null)
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
 }

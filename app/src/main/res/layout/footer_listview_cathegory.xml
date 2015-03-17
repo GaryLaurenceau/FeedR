@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/height_category_item"
+    android:layout_height="wrap_content"
     >
 
-    <ImageView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_category_item"
-        android:id="@+id/footer_listview"
-        android:layout_gravity="center_vertical"
-        android:background="@color/blue"
-        android:src="@drawable/ic_add"
-        />
+        android:layout_weight="1"
+        android:id="@+id/favorite"
+        android:text="@string/favorite"
+        android:textColor="@android:color/white"
+        android:background="@color/red"
+        android:textSize="25sp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"/>
 
 </LinearLayout>

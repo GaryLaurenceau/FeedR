@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sokss.feedr.app"
-    android:versionCode="8"
-    android:versionName="1.0" >
+    android:installLocation="auto"
+    android:versionCode="17"
+    android:versionName="1.2" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -19,10 +20,12 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:theme="@style/Theme.TranslucentActionBar" >
         <activity
             android:name="com.sokss.feedr.app.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustNothing" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,13 +35,30 @@
         <activity
             android:name="com.sokss.feedr.app.FeedActivity"
             android:label="@string/title_activity_feed"
-            android:parentActivityName="com.sokss.feedr.app.MainActivity" >
+            android:parentActivityName="com.sokss.feedr.app.MainActivity"
+            android:windowSoftInputMode="adjustNothing" >
         </activity>
         <activity
             android:name="com.sokss.feedr.app.NewsActivity"
+            android:hardwareAccelerated="true"
             android:label="@string/title_activity_news"
             android:parentActivityName="com.sokss.feedr.app.FeedActivity"
             android:theme="@style/Theme.TranslucentActionBar.ActionBar.Overlay" >
+        </activity>
+        <activity
+            android:name="com.sokss.feedr.app.ViewImageActivity"
+            android:label="@string/title_activity_view_image"
+            android:parentActivityName="com.sokss.feedr.app.NewsActivity" >
+        </activity>
+        <activity
+            android:name="com.sokss.feedr.app.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="com.sokss.feedr.app.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.sokss.feedr.app.CreditActivity"
+            android:label="@string/credits"
+            android:parentActivityName="com.sokss.feedr.app.MainActivity" >
         </activity>
         <activity
             android:name="com.sokss.feedr.app.CategoryActivity"
@@ -63,23 +83,7 @@
 
                 <data
                     android:host="*"
-                    android:pathPattern=".*xml"
-                    android:scheme="http" />
-                <data
-                    android:host="*"
                     android:pathPattern=".*rss"
-                    android:scheme="http" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*feed.*"
-                    android:scheme="http" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*podcast.*"
-                    android:scheme="http" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*Podcast.*"
                     android:scheme="http" />
                 <data
                     android:host="*"
@@ -97,9 +101,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:mimeType="text/xml"
-                    android:scheme="http" />
-                <data
                     android:mimeType="application/rss+xml"
                     android:scheme="http" />
                 <data
@@ -115,8 +116,6 @@
                 <data android:scheme="http" />
                 <data android:mimeType="application/rss+xml" />
                 <data android:mimeType="application/atom+xml" />
-                <data android:mimeType="application/xml" />
-                <data android:mimeType="text/xml" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -126,7 +125,6 @@
 
                 <data android:scheme="http" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.xml" />
                 <data android:pathPattern=".*\\.rss" />
             </intent-filter>
             <intent-filter>
@@ -148,7 +146,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="http" />
-                <data android:mimeType="text/xml" />
                 <data android:mimeType="application/rss+xml" />
                 <data android:mimeType="application/atom+xml" />
                 <data android:mimeType="application/xml" />
@@ -156,15 +153,15 @@
         </activity>
 
         <!-- Services -->
-        <service
-            android:name="com.sokss.feedr.app.services.AlarmService"
-            android:enabled="true" />
-
         <receiver android:name="com.sokss.feedr.app.services.AlarmReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name="com.sokss.feedr.app.services.AlarmService"
+            android:enabled="true" />
 
         <!-- CrashLytics -->
         <meta-data

@@ -1,46 +1,44 @@
 package com.sokss.feedr.app;
 
-import android.app.AlarmManager;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.Target;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.sokss.feedr.app.cache.MemoryCache;
-import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.fragment.CategoryListFragment;
 import com.sokss.feedr.app.fragment.FeedListFragment;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
-import com.sokss.feedr.app.request.RequestManager;
-import com.sokss.feedr.app.services.AlarmReceiver;
 import com.sokss.feedr.app.utils.AppRater;
-import com.sokss.feedr.app.utils.ColorManager;
 import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.Serializer;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends Activity {
 
     private static final String TAG = "com.sokss.feedr.app.MainActivity";
+
+    // Widgets
+    private FloatingActionsMenu mActionsMenu;
+    private FloatingActionButton mAddCategory;
+    private FloatingActionButton mCredit;
+    private View mShader;
 
     // Memory cache
     MemoryCache mMemoryCache = MemoryCache.getInstance();
@@ -52,6 +50,9 @@ public class MainActivity extends Activity {
     // Utils
     private Serializer mSerializer = Serializer.getInstance();
 
+    // Var
+    private Long mNewsTimestamp = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +62,13 @@ public class MainActivity extends Activity {
         mSerializer.getCategoriesFromPreferences(this);
         mCategoryListFragment = new CategoryListFragment();
 
+        setUI();
+
+        AppRater.app_launched(this);
+        isFlushCacheNeeded();
+    }
+
+    private void setUI() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.list_category, mCategoryListFragment);
 
@@ -87,6 +95,7 @@ public class MainActivity extends Activity {
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             Long categoryKey = getIntent().getExtras().getLong("category_key", -1L);
+            mNewsTimestamp = getIntent().getExtras().getLong("news_timestamp", 0L);
             if (categoryKey >= 0) {
                 for (int i = 0; i < mSerializer.getCategories().size(); ++i)
                     if (mSerializer.getCategories().get(i).getKey().equals(categoryKey))
@@ -94,8 +103,46 @@ public class MainActivity extends Activity {
             }
         }
 
-        AppRater.app_launched(this);
-        isFlushCacheNeeded();
+        mShader = (View) findViewById(R.id.shader);
+        mShader.setVisibility(View.GONE);
+
+        mActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        mActionsMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {
+                AlphaAnimation animate = new AlphaAnimation(0, 1f);
+//                TranslateAnimation animate = new TranslateAnimation(0, 0, mShader.getHeight(), 0);
+                animate.setDuration(200);
+                mShader.startAnimation(animate);
+                mShader.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+                AlphaAnimation animate = new AlphaAnimation(1, 0);
+//                TranslateAnimation animate = new TranslateAnimation(0, 0, 0, mShader.getHeight());
+                animate.setDuration(200);
+                mShader.startAnimation(animate);
+                mShader.setVisibility(View.GONE);
+            }
+        });
+
+        mAddCategory = (FloatingActionButton) findViewById(R.id.action_add_category);
+        mAddCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCategory();
+            }
+        });
+
+        mCredit = (FloatingActionButton) findViewById(R.id.action_show_credits);
+        mCredit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCredit();
+            }
+        });
+
     }
 
     @Override
@@ -108,6 +155,7 @@ public class MainActivity extends Activity {
                 mCategoryListFragment.refreshCategory();
                 break;
             case Constants.LOADER_NEWS:
+                mFeedListFragment.refreshNews();
                 mCategoryListFragment.refreshCategory();
                 mFeedListFragment.displayShowcaseViewThree();
                 break;
@@ -140,10 +188,12 @@ public class MainActivity extends Activity {
             mFeedListFragment.displayShowcaseViewOne();
             mFeedListFragment.openCategory(position);
             invalidateOptionsMenu();
+            mFeedListFragment.openNews(mNewsTimestamp);
         }
         else {
             Intent intent = new Intent(MainActivity.this, FeedActivity.class);
             intent.putExtra("cathegory", position);
+            intent.putExtra("news_timestamp", mNewsTimestamp);
             startActivityForResult(intent, Constants.LOADER_FEED);
             MainActivity.this.overridePendingTransition(R.anim.anim_out_right_to_left, R.anim.anim_in_right_to_left);
         }
@@ -152,6 +202,13 @@ public class MainActivity extends Activity {
     public void addCategory() {
         Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
         startActivityForResult(intent, Constants.LOADER_CATEGORY);
+        MainActivity.this.overridePendingTransition(R.anim.anim_out_right_to_left, R.anim.anim_in_right_to_left);
+    }
+
+    public void openCredit() {
+        Intent intent = new Intent(MainActivity.this, CreditActivity.class);
+        startActivityForResult(intent, Constants.LOADER_CATEGORY);
+        MainActivity.this.overridePendingTransition(R.anim.anim_out_right_to_left, R.anim.anim_in_right_to_left);
     }
 
     public void updateCategory(final int position) {
@@ -181,5 +238,12 @@ public class MainActivity extends Activity {
             dateLastLaunch = System.currentTimeMillis();
             sharedPreferences.edit().putLong(Constants.DATE_LAST_LAUNCH, dateLastLaunch).commit();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mActionsMenu.isExpanded())
+            mActionsMenu.toggle();
     }
 }

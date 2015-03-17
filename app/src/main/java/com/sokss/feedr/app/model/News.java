@@ -57,7 +57,7 @@ public class News implements Comparable<News> {
 
     }
 
-    public News(JSONObject data) {
+    public News(JSONObject data, Feed feed) {
         mTitle = data.optString("title", "");
         mLink = data.optString("link", "");
         mPubDate = new Date(data.optLong("pubDate", System.currentTimeMillis()));
@@ -66,6 +66,7 @@ public class News implements Comparable<News> {
         mImageUrl = data.optString("imageUrl", "");
         mRead = data.optBoolean("read", false);
         mOgTagParse = data.optBoolean("ogTagParse", false);
+        mFeed = feed;
     }
 
     public News(SyndEntry entry, SyndFeed syndFeed) {
@@ -257,6 +258,10 @@ public class News implements Comparable<News> {
 
     public void setFeed(Feed feed) {
         mFeed = feed;
+    }
+
+    public boolean matchQuery(final String query) {
+        return mTitle.toLowerCase().contains(query) || mContent.toLowerCase().contains(query);
     }
 
     @Override

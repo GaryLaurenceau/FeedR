@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.sokss.feedr.app.fadeActionBar.NotifyingScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scroll_view"
+    xmlns:pew="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:fillViewport="true"
-    android:background="@android:color/white"
+    android:id="@+id/scroll_view"
     >
 
     <LinearLayout
@@ -16,32 +18,46 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/fragment_news_image_header_height"
             >
 
-            <ImageView
+            <com.fmsirvent.ParallaxEverywhere.PEWImageView
                 android:id="@+id/image_header"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="@dimen/fragment_news_image_header_height"
                 android:scaleType="centerCrop"
+                pew:block_parallax_x="true"
                 />
+                <!--<ImageView-->
+                    <!--android:id="@+id/image_header"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="@dimen/fragment_news_image_header_height"-->
+                    <!--android:scaleType="centerCrop"-->
+                    <!--/>-->
 
-            <TextView
-                android:padding="@dimen/activity_horizontal_margin"
-                android:text="Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:id="@+id/news_title"
-                android:textColor="@android:color/white"
-                android:layout_marginBottom="10dp"
-                android:layout_alignBottom="@id/image_header"
-                android:shadowColor="#000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="6"
-                android:textIsSelectable="true"
-                />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@drawable/shadow_news"
+                    android:layout_alignBottom="@id/image_header"
+                    />
+
+                <TextView
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:text="Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25sp"
+                    android:id="@+id/news_title"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="8dp"
+                    android:layout_alignBottom="@id/image_header"
+                    android:shadowColor="#000"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="6"
+                    android:textIsSelectable="true"
+                    />
 
         </RelativeLayout>
 
@@ -52,16 +68,26 @@
             android:padding="@dimen/activity_horizontal_margin"
             >
 
-            <TextView
-                android:text="Date"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:id="@+id/news_date"
-                android:textColor="@android:color/black"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_weight="1"
-                android:layout_gravity="center"
-                android:gravity="center_vertical"
-                />
+                android:layout_gravity="center_vertical"
+                >
+
+                <TextView
+                    android:text="Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/news_date"
+                    android:textColor="@android:color/black"
+                    android:layout_weight="1"
+                    android:layout_gravity="left|center_vertical"
+                    android:gravity="center_vertical"
+
+                    />
+            </LinearLayout>
 
             <ImageView
                 android:layout_width="50dp"
@@ -106,7 +132,15 @@
                 android:visibility="gone"
                 />
 
-            </RelativeLayout>
+        </RelativeLayout>
+
+
+        <WebView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/webview"
+            android:layout_gravity="center"
+            />
 
         <TextView
             android:padding="@dimen/activity_horizontal_margin"
@@ -164,9 +198,6 @@
                 android:id="@+id/share_all"
                 android:padding="3dp"
                 />
-
-
-            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-
 </com.sokss.feedr.app.fadeActionBar.NotifyingScrollView>

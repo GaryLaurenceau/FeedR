@@ -30,11 +30,12 @@
             android:textColor="@android:color/white"
             android:layout_centerInParent="true"
             android:hint="@string/choose_category_name"
-            android:textColorHint="@android:color/white"
+            android:textColorHint="@color/overlay_white"
             android:background="#00000000"
-            android:textCursorDrawable="@null"
             android:singleLine="true"
+            android:imeOptions="flagNavigateNext"
             />
+        <!--android:textCursorDrawable="@null"-->
 
         <ImageView
             android:layout_width="40dp"
@@ -68,6 +69,7 @@
                 android:layout_weight="8"
                 android:hint="@string/title_search_feed"
                 android:singleLine="true"
+                android:imeOptions="actionSearch"
                 />
 
             <ImageView

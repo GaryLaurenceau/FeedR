@@ -2,18 +2,12 @@ package com.sokss.feedr.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.fragment.FeedListFragment;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
-import com.sokss.feedr.app.model.News;
 import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.Serializer;
 
@@ -42,19 +36,27 @@ public class FeedActivity extends Activity {
         mPosition = getIntent().getIntExtra("cathegory", 0);
         List<Category> tmp = mSerializer.getCategories();
 
-        if (mPosition < 0) {
+        if (mPosition == -1) {
             List<Feed> feeds = new ArrayList<Feed>();
             for (Category c : tmp) {
                 feeds.addAll(c.getFeeds());
             }
             mCategory = new Category("All", feeds);
         }
-        else
+        else if (mPosition == -2) {
+            mCategory = mSerializer.getFavorite();
+        }
+        else if (mPosition < tmp.size())
             mCategory = tmp.get(mPosition);
+        else {
+            finish();
+            return;
+        }
 
         mFeedListFragment = new FeedListFragment();
         mFeedListFragment.setCategory(mCategory);
         mFeedListFragment.setPosition(mPosition);
+        mFeedListFragment.setNewsTimestamp(getIntent().getLongExtra("news_timestamp", 0L));
         getFragmentManager().beginTransaction().replace(R.id.list_feed, mFeedListFragment).commit();
     }
 
@@ -62,6 +64,7 @@ public class FeedActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case Constants.LOADER_NEWS:
+                mFeedListFragment.refreshNews();
                 mFeedListFragment.displayShowcaseViewThree();
                 invalidateOptionsMenu();
                 break;

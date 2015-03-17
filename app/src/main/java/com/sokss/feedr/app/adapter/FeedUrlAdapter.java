@@ -2,6 +2,7 @@ package com.sokss.feedr.app.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.sokss.feedr.app.CategoryActivity;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.model.Feed;
 import com.sokss.feedr.app.utils.ImageDownloader;
+import com.sokss.feedr.app.utils.ThreadPool;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class FeedUrlAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<Feed> mFeedList;
+    private ThreadPool mThreadPool = ThreadPool.getInstance();
 
     public FeedUrlAdapter(Context context, List<Feed> feedList) {
         mContext = context;
@@ -65,12 +68,8 @@ public class FeedUrlAdapter extends BaseAdapter {
         else
             holder = (ViewHolder) convertView.getTag();
 
-        if (mFeedList.get(position).getThumbnail() != null) {
-            Log.d("thumbnail", mFeedList.get(position).getThumbnail());
-            new ImageDownloader().applyImage(holder.thumbnail, mFeedList.get(position).getThumbnail());
-        }
-        else
-            Log.d("thumbnail", "null");
+        if (mFeedList.get(position).getThumbnail() != null)
+            mThreadPool.execute(new ThumbnailDownloader(holder.thumbnail, mFeedList.get(position).getThumbnail()));
 
         holder.name.setText(Html.fromHtml(mFeedList.get(position).getName()));
         holder.url.setText(mFeedList.get(position).getUrl());
@@ -96,5 +95,29 @@ public class FeedUrlAdapter extends BaseAdapter {
 
     public void setFeedList(List<Feed> feedList) {
         mFeedList = feedList;
+    }
+
+    private class ThumbnailDownloader extends ThreadPool.Worker {
+
+        private ImageView mThumbnailView;
+        private String mUrl;
+
+        public ThumbnailDownloader(ImageView thumbnailView, String url) {
+            mThumbnailView = thumbnailView;
+            mUrl = url;
+        }
+
+        @Override
+        public void command() {
+            final Bitmap bitmap = new ImageDownloader().getBitmap(mUrl);
+            if (mContext != null && bitmap != null) {
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mThumbnailView.setImageBitmap(bitmap);
+                    }
+                });
+            }
+        }
     }
 }

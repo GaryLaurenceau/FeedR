@@ -7,6 +7,8 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.FeedException;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
+import com.sokss.feedr.app.request.RequestManager;
+import com.sokss.feedr.app.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +46,7 @@ public class Feed {
         mUrl = url;
         mNewsList = newsList;
         mCategory = category;
+        mThumbnail = Constants.GOOGLE_URL_FAVICON + mUrl;
     }
 
     public Feed(JSONObject data, Category category) {
@@ -52,8 +55,10 @@ public class Feed {
             mUrl = data.getString("url");
             JSONArray array = data.getJSONArray("news");
             for (int i = 0; i < array.length(); ++i)
-                mNewsList.add(new News(array.getJSONObject(i)));
+                mNewsList.add(new News(array.getJSONObject(i), this));
             mThumbnail = data.optString("thumbnail", null);
+            if (mThumbnail == null)
+                mThumbnail = Constants.GOOGLE_URL_FAVICON + mUrl;
             mCategory = category;
         }
         catch (JSONException je) {
@@ -62,13 +67,18 @@ public class Feed {
     }
 
     public JSONObject toJSON() {
+        return toJSON(true);
+    }
+
+    public JSONObject toJSON(boolean saveNews) {
         JSONObject data = new JSONObject();
         try {
             data.put("name", mName);
             data.put("url", mUrl);
             JSONArray news = new JSONArray();
-            for (News n : mNewsList)
-                news.put(n.toJSON());
+            if (saveNews)
+                for (News n : mNewsList)
+                    news.put(n.toJSON());
             data.put("news", news);
             data.put("thumbnail", mThumbnail);
         }
@@ -142,12 +152,9 @@ public class Feed {
             URL url = new URL(mUrl);
             XmlReader reader = null;
             try {
+                Log.i("RSS URL", url.toString());
                 reader = new XmlReader(url);
-                // TODO get icon
                 SyndFeed feed = new SyndFeedInput().build(reader);
-
-                if (feed.getImage() != null)
-                    mThumbnail = feed.getImage().getUrl();
 
                 for (Iterator i = feed.getEntries().iterator(); i.hasNext(); ) {
                     SyndEntry entry = (SyndEntry) i.next();

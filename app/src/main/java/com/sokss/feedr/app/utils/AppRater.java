@@ -20,8 +20,8 @@ import com.sokss.feedr.app.R;
  * Created by gary on 03/07/14.
  */
 public class AppRater {
-    private final static String APP_TITLE = "MemorizeIt";
-    private final static String APP_PNAME = "com.sokss.memorize.app";
+    private final static String APP_TITLE = "FeedR";
+    private final static String APP_PNAME = "com.sokss.feedr.app";
 
     private final static int DAYS_UNTIL_PROMPT = 2;
     private final static int LAUNCHES_UNTIL_PROMPT = 3;

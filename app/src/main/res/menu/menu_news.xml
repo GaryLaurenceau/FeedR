@@ -1,6 +1,12 @@
 <menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.sokss.feedr.app.NewsActivity">
+    tools:context=".MainActivity">
 
-
+    <item android:id="@+id/action_star_news"
+        android:title="@string/action_star"
+        android:icon="@drawable/ic_star"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        />
 </menu>

@@ -56,6 +56,7 @@ public class CategoryAdapter extends BaseAdapter {
 
             holder = new ViewHolder();
             holder.front = (RelativeLayout) convertView.findViewById(R.id.front);
+            holder.useless = (View) convertView.findViewById(R.id.useless);
             holder.name = (TextView) convertView.findViewById(R.id.cathegory_name);
             holder.count = (TextView) convertView.findViewById(R.id.count);
             holder.update = (TextView) convertView.findViewById(R.id.update_category);
@@ -73,9 +74,11 @@ public class CategoryAdapter extends BaseAdapter {
         if (size > 0) {
             holder.count.setTextColor(color);
             holder.count.setText(size.toString());
+            holder.useless.setVisibility(View.INVISIBLE);
             holder.count.setVisibility(View.VISIBLE);
         }
         else {
+            holder.useless.setVisibility(View.GONE);
             holder.count.setVisibility(View.GONE);
         }
         mColorManager.applyColorBackgroundRoundCorner(mContext, holder.front, color);
@@ -99,6 +102,7 @@ public class CategoryAdapter extends BaseAdapter {
 
     private class ViewHolder {
         RelativeLayout front;
+        View useless;
         TextView name;
         TextView count;
         TextView delete;

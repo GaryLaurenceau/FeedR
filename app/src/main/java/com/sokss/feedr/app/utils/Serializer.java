@@ -9,6 +9,7 @@ import android.util.Log;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
+import com.sokss.feedr.app.model.News;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,11 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by gary on 23/11/14.
  */
-public class Serializer {
+public class Serializer extends Observable {
 
     private static final String TAG = "com.sokss.feedr.app.utils.Serializer";
 
@@ -31,7 +33,12 @@ public class Serializer {
 
     private List<Category> mCathegories = new ArrayList<Category>();
 
+    private Category mFavorite = new Category();
+
     private Serializer() {
+        mFavorite.setKey(-4242L);
+        mFavorite.setColor(1);
+        mFavorite.getFeeds().add(new Feed());
     }
 
     public static Serializer getInstance() {
@@ -84,10 +91,23 @@ public class Serializer {
                 Log.e(TAG, je.toString());
             }
         }
+
+        String favorite = sharedPreferences.getString(Constants.FAVORITE_NEWS, "");
+        if (favorite != null)
+            try {
+                JSONObject json = new JSONObject(favorite);
+                mFavorite = new Category(json);
+                mFavorite.setName(context.getResources().getString(R.string.favorite));
+            }
+            catch (JSONException je) {
+                Log.e(TAG, je.toString());
+            }
         return mCathegories;
     }
 
     public void saveContent(Context context) {
+        if (context == null)
+            return;
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -104,31 +124,42 @@ public class Serializer {
     }
 
     public void saveCategory(Context context, Category category) {
+        if (context == null)
+            return;
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         JSONArray array = new JSONArray();
 
         String key;
-        if (category != null) {
-            if (category.getKey() < 0) {
-                for (Category c : mCathegories) {
-                    key = getKeyFromName(c.getKey());
-                    editor.putString(key, c.toJSON().toString());
+
+        try {
+            if (category != null) {
+                if (category.getKey() < 0) {
+                    for (Category c : mCathegories) {
+                        key = getKeyFromName(c.getKey());
+                        editor.putString(key, c.toJSON().toString());
+                    }
+                }
+                else {
+                    key = getKeyFromName(category.getKey());
+                    editor.putString(key, category.toJSON().toString());
                 }
             }
-            else {
-                key = getKeyFromName(category.getKey());
-                editor.putString(key, category.toJSON().toString());
+            for (int i = 0; i < mCathegories.size(); ++i) {
+                Category c = mCathegories.get(i);
+                key = getKeyFromName(c.getKey());
+                array.put(key);
             }
+            editor.putString(Constants.CATHEGORIES, array.toString());
+            editor.commit();
         }
-        for (int i = 0; i < mCathegories.size(); ++i) {
-            Category c = mCathegories.get(i);
-            key = getKeyFromName(c.getKey());
-            array.put(key);
+        catch (OutOfMemoryError outOfMemoryError) {
+            Log.d(TAG, "Couldd'nt save content");
         }
-        editor.putString(Constants.CATHEGORIES, array.toString());
-        editor.commit();
+
+        this.setChanged();
+        this.notifyObservers(category);
     }
 
     private String getKeyFromName(Long key) {
@@ -143,7 +174,7 @@ public class Serializer {
 
         try {
             for (Category c : mCathegories)
-                array.put(c.toJSON());
+                array.put(c.toJSON(false));
             data.put("cathegory_list", array);
 
             FileWriter fw = new FileWriter(Environment.getExternalStorageDirectory() + "/" + fileName + ".txt", false);
@@ -168,5 +199,25 @@ public class Serializer {
 
     public void setCategories(List<Category> cathegories) {
         mCathegories = cathegories;
+    }
+
+    public void addNewsToFavorite(Context context, News news) {
+        mFavorite.getFeeds().get(0).getNewsList().add(0, news);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(Constants.FAVORITE_NEWS, mFavorite.toJSON().toString()).commit();
+    }
+
+    public void removeNewsToFavorite(Context context, News news) {
+        mFavorite.getFeeds().get(0).getNewsList().remove(news);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(Constants.FAVORITE_NEWS, mFavorite.toJSON().toString()).commit();
+    }
+
+    public Category getFavorite() {
+        return mFavorite;
     }
 }

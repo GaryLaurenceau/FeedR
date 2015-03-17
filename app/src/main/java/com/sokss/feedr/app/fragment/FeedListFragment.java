@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -27,6 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
@@ -46,23 +50,30 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
-public class FeedListFragment extends Fragment implements OnRefreshListener {
+public class FeedListFragment extends Fragment implements OnRefreshListener, Observer {
 
     private static final String TAG = "com.sokss.feedr.app.fragment.FeedListFragment";
 
+    // Var
+    private String mFilterQuery = "";
+
     // Feedlist
     private ListView mFeedList;
+    private TextView mEmptyView;
     private FeedListAdapter mFeedListAdapter;
     private List<News> mNewsList;
 
     private Category mCategory;
-    private int mPosition;
+    private int mPosition = -1;
+    private Long mNewsTimestamp = 0L;
 
     // Interval alarm
     private Integer mIntervalAlarm = 0;
@@ -85,16 +96,8 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
 
         // Get UI
         mFeedList = (ListView) rootView.findViewById(R.id.list);
+        mEmptyView = (TextView) rootView.findViewById(R.id.empty);
         mPullToRefreshLayout = (PullToRefreshLayout) rootView.findViewById(R.id.pull_to_refresh_layout);
-
-        // Pull to refresh action bar
-        ActionBarPullToRefresh.from(getActivity())
-                .options(Options.create()
-                        .scrollDistance(.30f)
-                        .build())
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(mPullToRefreshLayout);
 
         setFeedList();
 
@@ -103,6 +106,19 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
         displayShowcaseViewOne();
 
         setDefaultAlarm();
+
+        openNews(mNewsTimestamp);
+
+        if (mPosition != -2) {
+            // Pull to refresh action bar
+            ActionBarPullToRefresh.from(getActivity())
+                    .options(Options.create()
+                            .scrollDistance(.30f)
+                            .build())
+                    .allChildrenArePullable()
+                    .listener(this)
+                    .setup(mPullToRefreshLayout);
+        }
         return rootView;
     }
 
@@ -111,23 +127,22 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
         mNewsList = loadFeeds();
         Collections.sort(mNewsList);
 
+        if (mNewsList.size() > 0 || mPosition == -2)
+            mEmptyView.setVisibility(View.GONE);
+
         // List view
         mFeedListAdapter = new FeedListAdapter(getActivity(), this, mNewsList);
         mFeedList.setAdapter(mFeedListAdapter);
         mFeedList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int p, long id) {
-                Intent intent = new Intent(getActivity(), NewsActivity.class);
-                intent.putExtra("cathegory_position", mPosition);
-                intent.putExtra("news_position", p);
-                startActivityForResult(intent, Constants.LOADER_NEWS);
-                getActivity().overridePendingTransition(R.anim.anim_out_right_to_left, R.anim.anim_in_right_to_left);
+                openNewsActivity(p);
             }
         });
 
         // Set action bar for mobile phone
         ActionBar actionBar = getActivity().getActionBar();
-        if (actionBar != null) {
+        if (actionBar != null && mCategory != null) {
             actionBar.setTitle(mCategory.getName());
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getIntArray(R.array.color_array)[mCategory.getColor()]));
         }
@@ -137,15 +152,21 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
         if (getActivity() == null)
             return;
 
+        if (mPosition == position)
+            return;
+
         mPosition = position;
         List<Category> tmp = mSerializer.getCategories();
 
-        if (mPosition < 0) {
+        if (mPosition == -1) {
             List<Feed> feeds = new ArrayList<Feed>();
             for (Category c : tmp) {
                 feeds.addAll(c.getFeeds());
             }
             mCategory = new Category("All", feeds);
+        }
+        else if (mPosition == -2) {
+            mCategory = mSerializer.getFavorite();
         }
         else
             mCategory = tmp.get(mPosition);
@@ -172,7 +193,10 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
 
             @Override
             protected void onPostExecute(List<News> newsList) {
+                if (getActivity() == null)
+                    return;
                 if (newsList.size() > 0) {
+                    mEmptyView.setVisibility(View.GONE);
                     mNewsList = newsList;
                     Collections.sort(mNewsList);
                     mSerializer.saveCategory(getActivity(), mCategory);
@@ -193,7 +217,8 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
                 List<News> newses = f.getNewsList();
                 newsList.addAll(newses);
             }
-            getActivity().invalidateOptionsMenu();
+            if (getActivity() != null)
+                getActivity().invalidateOptionsMenu();
         }
         catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -204,7 +229,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
     public void unread(boolean read) {
         for (News news : mNewsList)
             news.setRead(read);
-        mSerializer.saveCategory(getActivity(), mCategory);
+        mFeedListAdapter.notifyDataSetChanged();
+        if (getActivity() != null)
+            mSerializer.saveCategory(getActivity(), mCategory);
     }
 
     @Override
@@ -218,12 +245,40 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // if category is favorite category
+        if (mCategory != null && mCategory.getKey().equals(-4242L)) {
+            inflater.inflate(R.menu.menu_none, menu);
+            return;
+        }
         inflater.inflate(R.menu.menu_feed, menu);
         MenuItem itemAlarm;
         MenuItem itemRead;
+
+        // Get the SearchView and set the searchable configuration
+        MenuItem item = menu.findItem(R.id.action_filter);
+        final SearchView searchView = (SearchView) item.getActionView();
+        if (searchView != null)
+            if (getActivity() != null) {
+                SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            }
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    mFilterQuery = s;
+                    filterAdapter(s);
+                    return true;
+                }
+            });
+
         if (mCategory.getKey() >= 0) {
             itemAlarm = menu.add(Menu.NONE, R.id.action_set_alarm, Menu.NONE, getResources().getString(R.string.action_set_alarm)).setIcon(R.drawable.ic_bell);
-            itemAlarm.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            itemAlarm.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
         if (mCategory.isUnreadNews()) {
             itemRead = menu.add(Menu.NONE, R.id.action_unread, Menu.NONE, getResources().getString(R.string.action_read_all)).setIcon(R.drawable.ring_1);
@@ -250,6 +305,8 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
                 return true;
             case android.R.id.home:
                 Intent returnIntent = new Intent();
+                if (getActivity() == null)
+                    return false;
                 getActivity().setResult(Activity.RESULT_OK, returnIntent);
                 getActivity().finish();
                 getActivity().overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
@@ -282,7 +339,8 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
                 unread(mRead);
                 mRead = !mRead;
                 mDrawablePosition = 0;
-                getActivity().invalidateOptionsMenu();
+                if (getActivity() != null)
+                    getActivity().invalidateOptionsMenu();
             }
         }.start();
         if (mRead)
@@ -296,6 +354,8 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
             @Override
             public void run() {
                 try {
+                    if (getActivity() == null)
+                        return;
                     final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
 
                     if (!sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
@@ -342,6 +402,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
             @Override
             public void run() {
                 try {
+                    if (getActivity() == null)
+                        return;
+
                     final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
 
                     if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false))
@@ -383,6 +446,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
             @Override
             public void run() {
                 try {
+                    if (getActivity() == null)
+                        return;
+
                     final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
 
                     if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false))
@@ -427,6 +493,10 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
         mPosition = position;
     }
 
+    public void setNewsTimestamp(Long timestamp) {
+        mNewsTimestamp = timestamp;
+    }
+
     public Category getCategory() {
         return mCategory;
     }
@@ -455,28 +525,7 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
                     public void onClick(DialogInterface dialog, int id) {
                         mCategory.setInterval(mIntervalAlarm);
                         mSerializer.saveCategory(getActivity(), mCategory);
-                        long interval = AlarmManager.INTERVAL_DAY;
-                        switch (mIntervalAlarm) {
-                            case 0:
-                                interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-                                break;
-                            case 1:
-                                interval = AlarmManager.INTERVAL_HALF_HOUR;
-                                break;
-                            case 2:
-                                interval = AlarmManager.INTERVAL_HOUR;
-                                break;
-                            case 3:
-                                interval = AlarmManager.INTERVAL_HALF_DAY;
-                                break;
-                            case 4:
-                                interval = AlarmManager.INTERVAL_DAY;
-                                break;
-                            case 5:
-                                interval = -1;
-                                break;
-                        }
-                        setAlarmReceiver(interval);
+                        setAlarmReceiver();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -488,24 +537,26 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
         builder.create().show();
     }
 
-    private void setAlarmReceiver(long interval) {
+    private void setAlarmReceiver() {
         Intent intent = new Intent(getActivity(), AlarmReceiver.class);
         intent.putExtra("category_key", mCategory.getKey());
+        intent.putExtra("category_interval", mCategory.getIntervalValue());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), mCategory.getKey().intValue(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.HOUR, 1);
+//        calendar.add(Calendar.SECOND, 10);
         AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-//        Calendar c = Calendar.getInstance();
-//        c.setTimeInMillis(System.currentTimeMillis());
-//        c.add(Calendar.SECOND, 10);
         alarm.cancel(pendingIntent);
-        if (interval >= 0)
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, pendingIntent);
-//        alarm.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        Log.d(TAG, mCategory.getKey().toString());
+        if (mCategory.getIntervalValue() >= 0) {
+            alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_FIFTEEN_MINUTES, mCategory.getIntervalValue(), pendingIntent);
+        }
     }
 
     private void setDefaultAlarm() {
+        if (mCategory == null)
+            return;
+
         // Do not set alarm for "All" category
         if (mCategory.getKey() < 0)
             return;
@@ -514,8 +565,71 @@ public class FeedListFragment extends Fragment implements OnRefreshListener {
         if (mCategory.getInterval() != -2)
             return;
 
-        mCategory.setInterval(4);
-        setAlarmReceiver(AlarmManager.INTERVAL_DAY);
+        mCategory.setInterval(2);
+        setAlarmReceiver();
         mSerializer.saveCategory(getActivity(), mCategory);
+    }
+
+    private void openNewsActivity(int position) {
+        Intent intent = new Intent(getActivity(), NewsActivity.class);
+        intent.putExtra("cathegory_position", mPosition);
+        intent.putExtra("news_position", position);
+        intent.putExtra("filter_query", mFilterQuery);
+        getActivity().startActivityForResult(intent, Constants.LOADER_NEWS);
+        getActivity().overridePendingTransition(R.anim.anim_out_right_to_left, R.anim.anim_in_right_to_left);
+    }
+
+    public void openNews(Long timestamp) {
+        if (timestamp == null || timestamp <= 0)
+            return;
+        for (int i = 0; i < mNewsList.size(); ++i) {
+            if (mNewsList.get(i).getPubDate().getTime() == timestamp)
+                openNewsActivity(i);
+        }
+    }
+
+    public void refreshNews() {
+        mFeedListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (data instanceof Category) {
+            if (!((Category)data).getKey().equals(mCategory.getKey()))
+                return;
+            if (getActivity() != null)
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mPosition == -1)
+                            return;
+                        else if (mPosition == -2) {
+                            mCategory = mSerializer.getFavorite();
+                            mFeedListAdapter.setNewsList(mCategory.getNewsList());
+                        }
+                        else {
+                            mCategory = mSerializer.getCategories().get(mPosition);
+                            mFeedListAdapter.setNewsList(mCategory.getNewsList());
+                        }
+                        refreshNews();
+                    }
+                });
+        }
+    }
+
+    private void filterAdapter(final String filterString) {
+        mFeedListAdapter.getFilter().filter(filterString);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mSerializer.addObserver(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSerializer.deleteObserver(this);
     }
 }
