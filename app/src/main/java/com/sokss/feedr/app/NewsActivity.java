@@ -2,33 +2,37 @@ package com.sokss.feedr.app;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.Target;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
+//import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+//import com.github.amlcurran.showcaseview.ShowcaseView;
+//import com.github.amlcurran.showcaseview.targets.Target;
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrPosition;
 import com.sokss.feedr.app.adapter.NewsFragmentPagerAdapter;
-import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
 import com.sokss.feedr.app.model.News;
 import com.sokss.feedr.app.utils.ColorManager;
 import com.sokss.feedr.app.utils.Constants;
+import com.sokss.feedr.app.utils.ImageDownloader;
 import com.sokss.feedr.app.utils.Serializer;
 
 import java.util.ArrayList;
@@ -49,7 +53,7 @@ public class NewsActivity extends Activity {
     private NewsFragmentPagerAdapter mNewsPagerAdapter;
 
     // Data
-    private Category mCategory;
+    private Category mCategory = null;
     private List<News> mNewsList;
     private Integer mNewsPosition;
     private String mFilterQuery;
@@ -78,8 +82,13 @@ public class NewsActivity extends Activity {
         else if (cathegoryPosition == -2) {
             mCategory = mSerializer.getFavorite();
         }
-        else
+        else if (tmp.size() > cathegoryPosition)
             mCategory = tmp.get(cathegoryPosition);
+
+        if (mCategory == null) {
+            end();
+            return;
+        }
 
         mNewsViewPager = (ViewPager) findViewById(R.id.news_view_pager);
 
@@ -114,6 +123,14 @@ public class NewsActivity extends Activity {
         });
         getActionBar().setTitle(mCategory.getName());
         displayShowcaseViewOne();
+
+        SlidrConfig config = new SlidrConfig.Builder()
+                .position(SlidrPosition.LEFT)
+                .sensitivity(1f)
+                .build();
+
+        Slidr.attach(this, config);
+//        displayNotif();
     }
 
     @Override
@@ -136,10 +153,7 @@ public class NewsActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent returnIntent = new Intent();
-                setResult(RESULT_OK, returnIntent);
-                finish();
-                overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
+                end();
                 return true;
             case R.id.action_star_news:
                 News current = mNewsPagerAdapter.getNewsList().get(mNewsViewPager.getCurrentItem());
@@ -166,10 +180,7 @@ public class NewsActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_OK, returnIntent);
-        finish();
-        overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
+        end();
         super.onBackPressed();
     }
 
@@ -186,42 +197,44 @@ public class NewsActivity extends Activity {
     }
 
     private void displayShowcaseViewOne() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final SharedPreferences sharedPreferences = getSharedPreferences(Constants.PROFILE_APP, MODE_PRIVATE);
-
-                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_NEWS_ONE, false))
-                        return;
-
-                    new ShowcaseView.Builder(NewsActivity.this)
-                            .setContentTitle(getResources().getString(R.string.news_list_showcase_1))
-                            .setTarget(Target.NONE)
-                            .setStyle(R.style.CustomShowcaseTheme)
-                            .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                @Override
-                                public void onShowcaseViewShow(final ShowcaseView scv) {
-                                }
-
-                                @Override
-                                public void onShowcaseViewHide(final ShowcaseView scv) {
-                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_NEWS_ONE, true).commit();
-                                    scv.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                                }
-                            })
-                            .build();
-                } catch (Exception e) {}
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    final SharedPreferences sharedPreferences = getSharedPreferences(Constants.PROFILE_APP, MODE_PRIVATE);
+//
+//                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_NEWS_ONE, false))
+//                        return;
+//
+//                    new ShowcaseView.Builder(NewsActivity.this)
+//                            .setContentTitle(getResources().getString(R.string.news_list_showcase_1))
+//                            .setTarget(Target.NONE)
+//                            .setStyle(R.style.CustomShowcaseTheme)
+//                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+//                                @Override
+//                                public void onShowcaseViewShow(final ShowcaseView scv) {
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewHide(final ShowcaseView scv) {
+//                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_NEWS_ONE, true).commit();
+//                                    scv.setVisibility(View.GONE);
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+//                                }
+//                            })
+//                            .build();
+//                } catch (Exception e) {}
+//            }
+//        }, 500);
     }
 
     public boolean isFragmentNeedBeLoaded(int position) {
-        return (mNewsViewPager.getCurrentItem() - 1) <= position && (mNewsViewPager.getCurrentItem() + 1) >= position;
+        if (mNewsViewPager != null)
+            return (mNewsViewPager.getCurrentItem() - 1) <= position && (mNewsViewPager.getCurrentItem() + 1) >= position;
+        return false;
     }
 
     private void showToast(String text) {
@@ -229,4 +242,59 @@ public class NewsActivity extends Activity {
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
+    private void end() {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_OK, returnIntent);
+        finish();
+        overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
+    }
+
+    private void displayNotif() {
+        Intent intent = new Intent(this, MainActivity.class);
+        News news = mNewsList.get(0);
+        if (news != null) {
+            String categoryName = "FeedR";
+            String html = news.getTitle().replaceAll("<img.+?>", "");
+            Spanned content = Html.fromHtml(html, null, null);
+
+            if (news.getFeed() != null && news.getFeed().getCategory() != null) {
+                categoryName = news.getFeed().getCategory().getName();
+                intent.putExtra("category_key", news.getFeed().getCategory().getKey());
+                intent.putExtra("news_timestamp", news.getPubDate().getTime());
+            }
+
+            if (!news.getOgTagParse())
+                news.parseOgTag();
+
+            Bitmap bitmap = null;
+            if (news.getImageUrl() != null)
+                bitmap = new ImageDownloader().getPicture(news.getImageUrl());
+
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            // Create the action
+            NotificationCompat.Action action =
+                    new NotificationCompat.Action.Builder(R.drawable.ic_launcher,
+                            "", contentIntent)
+                            .build();
+
+            String contentText = content.toString().trim();
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setLargeIcon(bitmap)
+                            .setContentTitle(categoryName)
+                            .setContentText(contentText)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setAutoCancel(true)
+                            .extend(new NotificationCompat.WearableExtender().addAction(action))
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(contentText))
+                    ;
+
+            mBuilder.setContentIntent(contentIntent);
+            NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(this);
+
+            mNotificationManager.notify(1, mBuilder.build());
+        }
+    }
 }

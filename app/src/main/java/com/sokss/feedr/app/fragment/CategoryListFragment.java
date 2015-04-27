@@ -16,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.Target;
+//import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+//import com.github.amlcurran.showcaseview.ShowcaseView;
+//import com.github.amlcurran.showcaseview.targets.Target;
 import com.sokss.feedr.app.CategoryActivity;
 import com.sokss.feedr.app.MainActivity;
 import com.sokss.feedr.app.R;
@@ -124,9 +124,12 @@ public class CategoryListFragment extends Fragment {
     }
 
     public void updateCategory(final int position) {
-        Intent intent = new Intent(getActivity(), CategoryActivity.class);
-        intent.putExtra("ID", position);
-        startActivityForResult(intent, Constants.LOADER_CATEGORY);
+        if (getActivity() != null) {
+            mListViewCathegory.closeOpenedItems();
+            Intent intent = new Intent(getActivity(), CategoryActivity.class);
+            intent.putExtra("ID", position);
+            getActivity().startActivityForResult(intent, Constants.LOADER_CATEGORY);
+        }
     }
 
     public void deleteCategory(int position) {
@@ -138,10 +141,9 @@ public class CategoryListFragment extends Fragment {
     }
 
     public void refreshCategory() {
-        updateHeaderView();
         mCategoryAdapter.setCathegories(mSerializer.getCategories());
         mCategoryAdapter.notifyDataSetChanged();
-        mListViewCathegory.closeOpenedItems();
+        updateHeaderView();
     }
 
     private void updateHeaderView() {
@@ -172,39 +174,39 @@ public class CategoryListFragment extends Fragment {
     }
 
     private void displayShowcaseViewOne() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
-
-                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
-                        return;
-
-                    new ShowcaseView.Builder(getActivity())
-                            .setContentTitle(getResources().getString(R.string.category_list_showcase_1))
-                            .setTarget(Target.NONE)
-                            .setStyle(R.style.CustomShowcaseTheme)
-                            .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                @Override
-                                public void onShowcaseViewShow(final ShowcaseView scv) {
-                                }
-
-                                @Override
-                                public void onShowcaseViewHide(final ShowcaseView scv) {
-                                    scv.setVisibility(View.GONE);
-                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_MAIN_ONE, true).commit();
-                                }
-
-                                @Override
-                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                                }
-                            })
-                            .build();
-                }
-                catch (Exception e) {
-                }
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+//
+//                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
+//                        return;
+//
+//                    new ShowcaseView.Builder(getActivity())
+//                            .setContentTitle(getResources().getString(R.string.category_list_showcase_1))
+//                            .setTarget(Target.NONE)
+//                            .setStyle(R.style.CustomShowcaseTheme)
+//                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+//                                @Override
+//                                public void onShowcaseViewShow(final ShowcaseView scv) {
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewHide(final ShowcaseView scv) {
+//                                    scv.setVisibility(View.GONE);
+//                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_MAIN_ONE, true).commit();
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+//                                }
+//                            })
+//                            .build();
+//                }
+//                catch (Exception e) {
+//                }
+//            }
+//        }, 500);
     }
 }

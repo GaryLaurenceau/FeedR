@@ -33,9 +33,10 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.Target;
+//import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+//import com.github.amlcurran.showcaseview.ShowcaseView;
+//import com.github.amlcurran.showcaseview.targets.Target;
+import com.sokss.feedr.app.FeedActivity;
 import com.sokss.feedr.app.NewsActivity;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.adapter.FeedListAdapter;
@@ -243,6 +244,17 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
         return mFeedList.getFirstVisiblePosition() - 1 <= position && mFeedList.getLastVisiblePosition() + 1 >= position;
     }
 
+    public boolean isSliding() {
+        if (getActivity() == null)
+            return false;
+//        else if (getActivity() instanceof MainActivity)
+//            return ((MainActivity)getActivity()).isSliding();
+        else if (getActivity() instanceof FeedActivity)
+            return ((FeedActivity)getActivity()).isSliding();
+        else
+            return false;
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // if category is favorite category
@@ -257,7 +269,7 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
         // Get the SearchView and set the searchable configuration
         MenuItem item = menu.findItem(R.id.action_filter);
         final SearchView searchView = (SearchView) item.getActionView();
-        if (searchView != null)
+        if (searchView != null) {
             if (getActivity() != null) {
                 SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
@@ -275,20 +287,22 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
                     return true;
                 }
             });
+        }
 
-        if (mCategory.getKey() >= 0) {
-            itemAlarm = menu.add(Menu.NONE, R.id.action_set_alarm, Menu.NONE, getResources().getString(R.string.action_set_alarm)).setIcon(R.drawable.ic_bell);
-            itemAlarm.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        if (mCategory != null) {
+            if (mCategory.getKey() >= 0) {
+                itemAlarm = menu.add(Menu.NONE, R.id.action_set_alarm, Menu.NONE, getResources().getString(R.string.action_set_alarm)).setIcon(R.drawable.ic_bell);
+                itemAlarm.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            }
+            if (mCategory.isUnreadNews()) {
+                itemRead = menu.add(Menu.NONE, R.id.action_unread, Menu.NONE, getResources().getString(R.string.action_read_all)).setIcon(R.drawable.ring_1);
+                mRead = true;
+            } else {
+                itemRead = menu.add(Menu.NONE, R.id.action_read, Menu.NONE, getResources().getString(R.string.action_unread_all)).setIcon(R.drawable.ring_11);
+                mRead = false;
+            }
+            itemRead.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
-        if (mCategory.isUnreadNews()) {
-            itemRead = menu.add(Menu.NONE, R.id.action_unread, Menu.NONE, getResources().getString(R.string.action_read_all)).setIcon(R.drawable.ring_1);
-            mRead = true;
-        }
-        else {
-            itemRead = menu.add(Menu.NONE, R.id.action_read, Menu.NONE, getResources().getString(R.string.action_unread_all)).setIcon(R.drawable.ring_11);
-            mRead = false;
-        }
-        itemRead.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -350,139 +364,139 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
     }
 
     public void displayShowcaseViewOne() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (getActivity() == null)
-                        return;
-                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
-
-                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
-                        return;
-
-                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false)) {
-                        displayShowcaseViewTwo();
-                        return;
-                    }
-
-                    Display display = getActivity().getWindowManager().getDefaultDisplay();
-                    Point size = new Point();
-                    display.getSize(size);
-                    int width = size.x;
-                    ShowcaseView sv = new ShowcaseView.Builder(getActivity())
-                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_1))
-//                    .setTarget(new PointTarget(width / 2, 200))
-                            .setTarget(Target.NONE)
-                            .setStyle(R.style.CustomShowcaseTheme)
-                            .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                @Override
-                                public void onShowcaseViewShow(final ShowcaseView scv) {
-                                }
-
-                                @Override
-                                public void onShowcaseViewHide(final ShowcaseView scv) {
-                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_ONE, true).commit();
-                                    scv.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                                }
-                            })
-                            .build();
-                } catch (Exception e) {
-                }
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (getActivity() == null)
+//                        return;
+//                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+//
+//                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_MAIN_ONE, false))
+//                        return;
+//
+//                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false)) {
+//                        displayShowcaseViewTwo();
+//                        return;
+//                    }
+//
+//                    Display display = getActivity().getWindowManager().getDefaultDisplay();
+//                    Point size = new Point();
+//                    display.getSize(size);
+//                    int width = size.x;
+//                    ShowcaseView sv = new ShowcaseView.Builder(getActivity())
+//                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_1))
+////                    .setTarget(new PointTarget(width / 2, 200))
+//                            .setTarget(Target.NONE)
+//                            .setStyle(R.style.CustomShowcaseTheme)
+//                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+//                                @Override
+//                                public void onShowcaseViewShow(final ShowcaseView scv) {
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewHide(final ShowcaseView scv) {
+//                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_ONE, true).commit();
+//                                    scv.setVisibility(View.GONE);
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+//                                }
+//                            })
+//                            .build();
+//                } catch (Exception e) {
+//                }
+//            }
+//        }, 500);
     }
 
     private void displayShowcaseViewTwo() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (getActivity() == null)
-                        return;
-
-                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
-
-                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false))
-                        return;
-
-                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false)) {
-                        displayShowcaseViewThree();
-                        return;
-                    }
-
-                    new ShowcaseView.Builder(getActivity())
-                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_2))
-                            .setTarget(Target.NONE)
-                            .setStyle(R.style.CustomShowcaseTheme)
-                            .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                @Override
-                                public void onShowcaseViewShow(final ShowcaseView scv) {
-                                }
-
-                                @Override
-                                public void onShowcaseViewHide(final ShowcaseView scv) {
-                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_TWO, true).commit();
-                                    scv.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                                }
-                            })
-                            .build();
-                } catch (Exception e) {
-                }
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (getActivity() == null)
+//                        return;
+//
+//                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+//
+//                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_ONE, false))
+//                        return;
+//
+//                    if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false)) {
+//                        displayShowcaseViewThree();
+//                        return;
+//                    }
+//
+//                    new ShowcaseView.Builder(getActivity())
+//                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_2))
+//                            .setTarget(Target.NONE)
+//                            .setStyle(R.style.CustomShowcaseTheme)
+//                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+//                                @Override
+//                                public void onShowcaseViewShow(final ShowcaseView scv) {
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewHide(final ShowcaseView scv) {
+//                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_TWO, true).commit();
+//                                    scv.setVisibility(View.GONE);
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+//                                }
+//                            })
+//                            .build();
+//                } catch (Exception e) {
+//                }
+//            }
+//        }, 500);
     }
 
     public void displayShowcaseViewThree() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (getActivity() == null)
-                        return;
-
-                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
-
-                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false))
-                        return;
-
-                    else if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_THREE, false)) {
-                        return;
-                    }
-
-                    new ShowcaseView.Builder(getActivity())
-                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_3))
-//                    .setTarget(new ViewTarget(mCategory.isUnreadNews() ? R.id.action_read : R.id.action_unread, getActivity()))
-                            .setTarget(Target.NONE)
-                            .setStyle(R.style.CustomShowcaseTheme)
-                            .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                @Override
-                                public void onShowcaseViewShow(final ShowcaseView scv) {
-                                }
-
-                                @Override
-                                public void onShowcaseViewHide(final ShowcaseView scv) {
-                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_THREE, true).commit();
-                                    scv.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
-                                }
-                            })
-                            .build();
-                } catch (Exception e) {
-                }
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (getActivity() == null)
+//                        return;
+//
+//                    final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PROFILE_APP, Context.MODE_PRIVATE);
+//
+//                    if (!sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_TWO, false))
+//                        return;
+//
+//                    else if (sharedPreferences.getBoolean(Constants.SHOWCASE_FEED_THREE, false)) {
+//                        return;
+//                    }
+//
+//                    new ShowcaseView.Builder(getActivity())
+//                            .setContentTitle(getResources().getString(R.string.feed_list_showcase_3))
+////                    .setTarget(new ViewTarget(mCategory.isUnreadNews() ? R.id.action_read : R.id.action_unread, getActivity()))
+//                            .setTarget(Target.NONE)
+//                            .setStyle(R.style.CustomShowcaseTheme)
+//                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+//                                @Override
+//                                public void onShowcaseViewShow(final ShowcaseView scv) {
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewHide(final ShowcaseView scv) {
+//                                    sharedPreferences.edit().putBoolean(Constants.SHOWCASE_FEED_THREE, true).commit();
+//                                    scv.setVisibility(View.GONE);
+//                                }
+//
+//                                @Override
+//                                public void onShowcaseViewDidHide(final ShowcaseView scv) {
+//                                }
+//                            })
+//                            .build();
+//                } catch (Exception e) {
+//                }
+//            }
+//        }, 500);
     }
 
     public int getPosition() {
@@ -520,7 +534,7 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
                         mIntervalAlarm = which;
                     }
                 })
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         mCategory.setInterval(mIntervalAlarm);
@@ -580,7 +594,7 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
     }
 
     public void openNews(Long timestamp) {
-        if (timestamp == null || timestamp <= 0)
+        if (timestamp == null || timestamp <= 0 || mNewsList == null)
             return;
         for (int i = 0; i < mNewsList.size(); ++i) {
             if (mNewsList.get(i).getPubDate().getTime() == timestamp)

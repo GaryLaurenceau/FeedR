@@ -6,7 +6,7 @@
         android:title="@string/action_filter"
         android:icon="@drawable/ic_search"
         android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.widget.SearchView"
         />
-    <!--android:actionViewClass="android.widget.SearchView"-->
 </menu>
 <!-- From: file:/Users/gary/AndroidStudioProjects/FeedR/app/src/main/res/menu/menu_feed.xml -->

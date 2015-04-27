@@ -161,6 +161,11 @@ public class FeedListAdapter extends BaseAdapter implements Filterable {
                     return;
                 }
 
+//                if (mFeedListFragment.isSliding())
+//                    return;
+                while (mFeedListFragment.isSliding())
+                    Thread.sleep(50);
+
                 // Get cover picture
                 if (!mNews.getOgTagParse())
                     mNews.parseOgTag();

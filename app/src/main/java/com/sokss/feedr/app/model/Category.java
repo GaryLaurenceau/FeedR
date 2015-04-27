@@ -124,10 +124,8 @@ public class Category {
                 return AlarmManager.INTERVAL_HALF_DAY;
             case 2:
                 return AlarmManager.INTERVAL_DAY;
-            case -1:
-                return -1;
             default:
-                return AlarmManager.INTERVAL_HALF_DAY;
+                return -1;
         }
     }
 

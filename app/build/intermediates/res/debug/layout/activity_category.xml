@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background_material_light"
     >
 
     <RelativeLayout
@@ -80,6 +81,7 @@
                 android:layout_marginRight="15dp"
                 android:layout_marginLeft="15dp"
                 android:src="@drawable/ic_search"
+                android:tint="@android:color/black"
                 />
 
         </LinearLayout>

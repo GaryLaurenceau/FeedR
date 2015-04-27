@@ -171,6 +171,9 @@ public class Feed {
                 Collections.sort(newsListFeed);
                 setNewsList(newsListFeed);
             }
+            catch (ExceptionInInitializerError eie) {
+
+            }
             finally {
                 if (reader != null)
                     reader.close();

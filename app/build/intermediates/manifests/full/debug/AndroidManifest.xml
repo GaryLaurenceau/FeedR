@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sokss.feedr.app"
     android:installLocation="auto"
-    android:versionCode="17"
+    android:versionCode="18"
     android:versionName="1.2" >
 
     <uses-sdk
@@ -167,6 +167,9 @@
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="8ed3f8c1ed370ced31c40b0580df0fd4648039bc" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

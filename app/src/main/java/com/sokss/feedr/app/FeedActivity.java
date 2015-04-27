@@ -3,8 +3,14 @@ package com.sokss.feedr.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrListener;
+import com.r0adkll.slidr.model.SlidrPosition;
 import com.sokss.feedr.app.fragment.FeedListFragment;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
@@ -21,6 +27,7 @@ public class FeedActivity extends Activity {
     // Data
     private Category mCategory;
     private int mPosition;
+    private boolean mIsSliding = false;
 
     // Fragment
     private FeedListFragment mFeedListFragment;
@@ -58,6 +65,36 @@ public class FeedActivity extends Activity {
         mFeedListFragment.setPosition(mPosition);
         mFeedListFragment.setNewsTimestamp(getIntent().getLongExtra("news_timestamp", 0L));
         getFragmentManager().beginTransaction().replace(R.id.list_feed, mFeedListFragment).commit();
+
+        SlidrConfig config = new SlidrConfig.Builder()
+                .position(SlidrPosition.LEFT)
+                .sensitivity(1f)
+                .listener(new SlidrListener() {
+                    @Override
+                    public void onSlideStateChanged(int state) {
+                        if (state == DrawerLayout.STATE_DRAGGING) {
+                            mIsSliding = true;
+                        }
+                        else {
+                            mIsSliding = false;
+                        }
+                    }
+
+                    @Override
+                    public void onSlideChange(float percent) {
+                    }
+
+                    @Override
+                    public void onSlideOpened() {
+                    }
+
+                    @Override
+                    public void onSlideClosed() {
+                    }
+                })
+                .build();
+
+        Slidr.attach(this, config);
     }
 
     @Override
@@ -90,5 +127,9 @@ public class FeedActivity extends Activity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+    }
+
+    public boolean isSliding() {
+        return mIsSliding;
     }
 }

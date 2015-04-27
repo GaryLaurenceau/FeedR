@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v4.app.NavUtils;
@@ -16,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CheckedTextView;
@@ -27,6 +29,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrPosition;
 import com.sokss.feedr.app.adapter.FeedResultAdapter;
 import com.sokss.feedr.app.adapter.FeedUrlAdapter;
 import com.sokss.feedr.app.database.DataStorage;
@@ -102,6 +107,13 @@ public class CategoryActivity extends Activity {
         getUI();
         setUI(feedUrl);
         setListeners();
+
+        SlidrConfig config = new SlidrConfig.Builder()
+                .position(SlidrPosition.LEFT)
+                .sensitivity(1f)
+                .build();
+
+        Slidr.attach(this, config);
     }
 
     @Override
@@ -119,8 +131,7 @@ public class CategoryActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
-        overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
+        end();
         return super.onOptionsItemSelected(item);
     }
 
@@ -210,7 +221,7 @@ public class CategoryActivity extends Activity {
                     mSerializer.getCategories().add(mCategory);
                 }
                 mSerializer.saveCategory(CategoryActivity.this, mCategory);
-                finish();
+                end();
             }
         });
 
@@ -223,7 +234,7 @@ public class CategoryActivity extends Activity {
 
                 alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        finish();
+                        end();
                     }
                 });
 
@@ -311,57 +322,63 @@ public class CategoryActivity extends Activity {
     }
 
     private void createMultipleChoiceDialog(final List<Feed> feedList) {
-        if (feedList.size() == 0) {
-            final FeedResultAdapter adapter = new FeedResultAdapter(this, feedList);
-            final AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.choose_feed))
-                    .setMessage(mQueryFeed.getText())
-                    .setAdapter(adapter, null)
-                    .setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Feed feed = new Feed(mQueryFeed.getText().toString(), new ArrayList<News>(), mCategory);
-                            mCategory.getFeeds().add(feed);
-                            mFeedUrlAdapter.notifyDataSetChanged();
-                            adapter.notifyDataSetChanged();
-                            dialog.dismiss();
-                        }
-                    })
-                    .setNegativeButton(getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create();
-            try {
+        try {
+            if (feedList.size() == 0) {
+                final FeedResultAdapter adapter = new FeedResultAdapter(this, feedList);
+                final AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.choose_feed))
+                        .setMessage(mQueryFeed.getText())
+                        .setAdapter(adapter, null)
+                        .setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Feed feed = new Feed(mQueryFeed.getText().toString(), new ArrayList<News>(), mCategory);
+                                mCategory.getFeeds().add(feed);
+                                mFeedUrlAdapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create();
+                try {
+                    dialog.show();
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
+            } else {
+                final FeedResultAdapter adapter = new FeedResultAdapter(this, feedList);
+                final AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.choose_feed))
+                        .setAdapter(adapter, null)
+                        .setPositiveButton(getResources().getString(android.R.string.ok), null)
+                        .setNegativeButton(getResources().getString(android.R.string.cancel), null)
+                        .create();
+
+                dialog.getListView().setItemsCanFocus(false);
+                dialog.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                dialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        mCategory.getFeeds().add(feedList.get(position));
+                        mFeedUrlAdapter.notifyDataSetChanged();
+                        feedList.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
                 dialog.show();
             }
-            catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
         }
-        else {
-            final FeedResultAdapter adapter = new FeedResultAdapter(this, feedList);
-            final AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.choose_feed))
-                    .setAdapter(adapter, null)
-                    .setPositiveButton(getResources().getString(android.R.string.ok), null)
-                    .setNegativeButton(getResources().getString(android.R.string.cancel), null)
-                    .create();
-
-            dialog.getListView().setItemsCanFocus(false);
-            dialog.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-            dialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mCategory.getFeeds().add(feedList.get(position));
-                    mFeedUrlAdapter.notifyDataSetChanged();
-                    feedList.remove(position);
-                    adapter.notifyDataSetChanged();
-                }
-            });
-            dialog.show();
+        catch (WindowManager.BadTokenException bad) {
+            Log.e(TAG, bad.toString());
+        }
+        catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -381,6 +398,12 @@ public class CategoryActivity extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        end();
+    }
+
+    private void end() {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_OK, returnIntent);
         finish();
         overridePendingTransition(R.anim.anim_in_left_to_right, R.anim.anim_out_left_to_right);
     }

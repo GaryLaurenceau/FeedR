@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 
     private static final String TAG = "com.sokss.feedr.app.MainActivity";
 
-    // Widgets
+    // Views
     private FloatingActionsMenu mActionsMenu;
     private FloatingActionButton mAddCategory;
     private FloatingActionButton mCredit;
@@ -52,6 +52,7 @@ public class MainActivity extends Activity {
 
     // Var
     private Long mNewsTimestamp = null;
+    private boolean mIsSliding = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,7 @@ public class MainActivity extends Activity {
             mFeedListFragment.setPosition(-1);
             ft.replace(R.id.list_feed, mFeedListFragment);
         }
-        else
+        else if (getActionBar() != null)
             getActionBar().hide();
 
         ft.commit();
@@ -105,13 +106,22 @@ public class MainActivity extends Activity {
 
         mShader = (View) findViewById(R.id.shader);
         mShader.setVisibility(View.GONE);
+        mShader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlphaAnimation animate = new AlphaAnimation(1, 0);
+                animate.setDuration(200);
+                mShader.startAnimation(animate);
+                mShader.setVisibility(View.GONE);
+                mActionsMenu.toggle();
+            }
+        });
 
         mActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
         mActionsMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
                 AlphaAnimation animate = new AlphaAnimation(0, 1f);
-//                TranslateAnimation animate = new TranslateAnimation(0, 0, mShader.getHeight(), 0);
                 animate.setDuration(200);
                 mShader.startAnimation(animate);
                 mShader.setVisibility(View.VISIBLE);
@@ -120,7 +130,6 @@ public class MainActivity extends Activity {
             @Override
             public void onMenuCollapsed() {
                 AlphaAnimation animate = new AlphaAnimation(1, 0);
-//                TranslateAnimation animate = new TranslateAnimation(0, 0, 0, mShader.getHeight());
                 animate.setDuration(200);
                 mShader.startAnimation(animate);
                 mShader.setVisibility(View.GONE);
@@ -245,5 +254,9 @@ public class MainActivity extends Activity {
         super.onPause();
         if (mActionsMenu.isExpanded())
             mActionsMenu.toggle();
+    }
+
+    public boolean isSliding() {
+        return mIsSliding;
     }
 }

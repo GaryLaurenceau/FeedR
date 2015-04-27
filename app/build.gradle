@@ -25,7 +25,7 @@ android {
         applicationId "com.sokss.feedr.app"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 17
+        versionCode 19
         versionName "1.2"
     }
     buildTypes {
@@ -43,11 +43,19 @@ android {
 dependencies {
     // Common libs
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Wear app project
+//    wearApp project(':wear')
+//    debugWearApp project(path:':wear', configuration: 'debug')
+//    releaseWearApp project(path:':wear', configuration: 'release')
+
     compile 'com.android.support:appcompat-v7:21.0.0'
-    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:support-v4:21.0.+'
     compile 'com.android.support:support-v13:21.0.0'
+    compile 'com.google.android.gms:play-services-wearable:6.5.87'
 
     // Pull to refresh library
+
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
 
     // ROME rss feed library
@@ -66,18 +74,18 @@ dependencies {
     }
     compile files('libs/hamcrest-core.jar')
     compile files('libs/htmlcleaner-2.8.jar')
-
-
     // Sugar ORM for database management
-//    compile 'com.github.satyan:sugar:1.3'
-//    compile files('libs/commons-collections4-4.0.jar')
+    //    compile 'com.github.satyan:sugar:1.3'
+    //    compile files('libs/commons-collections4-4.0.jar')
 
     // Showcase library
-    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
+//    compile 'com.github.amlcurran.showcaseview:library:+'
 
     // Parallax effect
     compile 'com.fmsirvent:parallaxeverywhere:1.+'
 
     // Floating button
     compile 'com.getbase:floatingactionbutton:1.8.0'
+    // Swipe to finish ctivity
+    compile project(':slidr')
 }
