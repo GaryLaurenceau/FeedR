@@ -58,7 +58,7 @@ public class RequestManager {
         try {
             encodedParams += URLEncoder.encode(query, "UTF-8");
         } catch (Exception e) {
-            Log.e(TAG, "checkPseudo error utf8");
+            Log.e(TAG, "error utf8");
             return null;
         }
         HttpGet requestGet = new HttpGet(Constants.GOOGLE_FIND_FEED_URL + encodedParams);

@@ -12,6 +12,7 @@
 /Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/rome-fetcher-1.0.0-b6180e2d98f7a787ba35bebf07db4bc77fc6dc66.jar
 /Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-c31a43d7c0b79c0933022f264764096de2282256.jar
 /Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/hamcrest-core-a20adcbaf5633fb557c86020ee2245c5a70df90a.jar
+/Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/httpmime-4.3.5-dc861fdabb474ef08a86f643e290646f36ffbdf1.jar
 /Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/ormlite-android-4.48-5104887e24fd21c01a15b42798d5966e0cea5aef.jar
 /Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/classes-cda1371848e01894834f1b47c2619617f9c0dbb5.jar
 /Users/gary/AndroidStudioProjects/FeedR/app/build/intermediates/pre-dexed/debug/library-2.4.0-8fe2de12e80d2be354f79b96d184a7665d558eca.jar

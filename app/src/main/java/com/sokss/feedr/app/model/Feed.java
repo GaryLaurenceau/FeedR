@@ -174,6 +174,9 @@ public class Feed {
             catch (ExceptionInInitializerError eie) {
 
             }
+            catch (NoClassDefFoundError noClassDefFoundError) {
+
+            }
             finally {
                 if (reader != null)
                     reader.close();
