@@ -9,9 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,21 +22,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.sokss.feedr.app.adapter.FeedResultAdapter;
 import com.sokss.feedr.app.adapter.FeedUrlAdapter;
-import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
 import com.sokss.feedr.app.model.News;
@@ -254,7 +253,7 @@ public class CategoryActivity extends Activity {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("rss_url", mCategory.getFeeds().get(position).getUrl());
                 clipboard.setPrimaryClip(clip);
-                showToast(getResources().getString(R.string.url_copy_to_clipboard));
+                showSnack(getResources().getString(R.string.url_copy_to_clipboard));
                 return true;
             }
         });
@@ -266,7 +265,7 @@ public class CategoryActivity extends Activity {
             findFeed(mQueryFeed.getText().toString());
         }
         else
-            showToast(getResources().getString(R.string.query_empty));
+            showSnack(getResources().getString(R.string.query_empty));
         closeKeyBoard(mQueryFeed);
     }
 
@@ -312,8 +311,8 @@ public class CategoryActivity extends Activity {
         }.execute();
     }
 
-    private void showToast(final String content) {
-        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+    private void showSnack(final String content) {
+        Snackbar.make(findViewById(android.R.id.content), content, Snackbar.LENGTH_SHORT).show();
     }
 
     public void closeKeyBoard(EditText editText) {

@@ -9,14 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.sokss.feedr.app.cache.MemoryCache;
 import com.sokss.feedr.app.fragment.CategoryListFragment;
 import com.sokss.feedr.app.fragment.FeedListFragment;
 import com.sokss.feedr.app.model.Category;
@@ -39,9 +35,6 @@ public class MainActivity extends Activity {
     private FloatingActionButton mAddCategory;
     private FloatingActionButton mCredit;
     private View mShader;
-
-    // Memory cache
-    MemoryCache mMemoryCache = MemoryCache.getInstance();
 
     // Fragments
     CategoryListFragment mCategoryListFragment = null;
@@ -228,11 +221,6 @@ public class MainActivity extends Activity {
         mCategoryListFragment.deleteCategory(position);
     }
 
-    private void showToast(String content) {
-        if (content != null)
-            Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
-    }
-
     private void isFlushCacheNeeded() {
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.PROFILE_APP, MODE_PRIVATE);
 
@@ -243,7 +231,6 @@ public class MainActivity extends Activity {
         }
 
         if (System.currentTimeMillis() >= dateLastLaunch + (Constants.DAYS_UNTIL_CLEAR * 24 * 60 * 60 * 1000)) {
-            MemoryCache.getInstance().flushCache();
             dateLastLaunch = System.currentTimeMillis();
             sharedPreferences.edit().putLong(Constants.DATE_LAST_LAUNCH, dateLastLaunch).commit();
         }
@@ -256,7 +243,4 @@ public class MainActivity extends Activity {
             mActionsMenu.toggle();
     }
 
-    public boolean isSliding() {
-        return mIsSliding;
-    }
 }

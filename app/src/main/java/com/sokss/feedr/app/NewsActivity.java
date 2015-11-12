@@ -5,11 +5,10 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
@@ -17,8 +16,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 //import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 //import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -31,9 +28,9 @@ import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.model.Feed;
 import com.sokss.feedr.app.model.News;
 import com.sokss.feedr.app.utils.ColorManager;
-import com.sokss.feedr.app.utils.Constants;
-import com.sokss.feedr.app.utils.ImageDownloader;
 import com.sokss.feedr.app.utils.Serializer;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +135,10 @@ public class NewsActivity extends Activity {
         getMenuInflater().inflate(R.menu.menu_news, menu);
         MenuItem item = menu.findItem(R.id.action_star_news);
         News current = mNewsPagerAdapter.getNewsList().get(mNewsViewPager.getCurrentItem());
-        if (mSerializer.getFavorite().getNewsList().contains(current)) {
+        if (item == null) {
+            return false;
+        }
+        if (current != null && mSerializer.getFavorite().getNewsList().contains(current)) {
             item.setIcon(getResources().getDrawable(R.drawable.ic_star));
             item.setTitle(getResources().getString(R.string.remove_from_favorite));
         }
@@ -159,11 +159,11 @@ public class NewsActivity extends Activity {
                 News current = mNewsPagerAdapter.getNewsList().get(mNewsViewPager.getCurrentItem());
                 if (mSerializer.getFavorite().getNewsList().contains(current)) {
                     mSerializer.removeNewsToFavorite(this, current);
-                    showToast(getResources().getString(R.string.remove_from_favorite));
+                    showSnack(getResources().getString(R.string.remove_from_favorite));
                 }
                 else {
                     mSerializer.addNewsToFavorite(this, current);
-                    showToast('"' + current.getTitle() + "\" " + getResources().getString(R.string.add_to_favorite));
+                    showSnack('"' + current.getTitle() + "\" " + getResources().getString(R.string.add_to_favorite));
                 }
                 invalidateOptionsMenu();
                 return true;
@@ -237,9 +237,9 @@ public class NewsActivity extends Activity {
         return false;
     }
 
-    private void showToast(String text) {
+    private void showSnack(String text) {
         if (text != null)
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show();
     }
 
     private void end() {
@@ -250,51 +250,62 @@ public class NewsActivity extends Activity {
     }
 
     private void displayNotif() {
-        Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, MainActivity.class);
         News news = mNewsList.get(0);
         if (news != null) {
-            String categoryName = "FeedR";
-            String html = news.getTitle().replaceAll("<img.+?>", "");
-            Spanned content = Html.fromHtml(html, null, null);
+            final String categoryName;
+            final String html = news.getTitle().replaceAll("<img.+?>", "");
+            final Spanned content = Html.fromHtml(html, null, null);
 
             if (news.getFeed() != null && news.getFeed().getCategory() != null) {
                 categoryName = news.getFeed().getCategory().getName();
                 intent.putExtra("category_key", news.getFeed().getCategory().getKey());
                 intent.putExtra("news_timestamp", news.getPubDate().getTime());
             }
+            else {
+                categoryName = "FeedR";
+            }
 
-            if (!news.getOgTagParse())
-                news.parseOgTag();
+            news.loadImage(this, new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
-            Bitmap bitmap = null;
-            if (news.getImageUrl() != null)
-                bitmap = new ImageDownloader().getPicture(news.getImageUrl());
+                    PendingIntent contentIntent = PendingIntent.getActivity(NewsActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    // Create the action
+                    NotificationCompat.Action action =
+                            new NotificationCompat.Action.Builder(R.drawable.ic_launcher,
+                                    "", contentIntent)
+                                    .build();
 
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            // Create the action
-            NotificationCompat.Action action =
-                    new NotificationCompat.Action.Builder(R.drawable.ic_launcher,
-                            "", contentIntent)
-                            .build();
+                    String contentText = content.toString().trim();
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(NewsActivity.this)
+                                    .setSmallIcon(R.drawable.ic_launcher)
+                                    .setLargeIcon(bitmap)
+                                    .setContentTitle(categoryName)
+                                    .setContentText(contentText)
+                                    .setDefaults(Notification.DEFAULT_ALL)
+                                    .setAutoCancel(true)
+                                    .extend(new NotificationCompat.WearableExtender().addAction(action))
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                            .bigText(contentText));
 
-            String contentText = content.toString().trim();
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setLargeIcon(bitmap)
-                            .setContentTitle(categoryName)
-                            .setContentText(contentText)
-                            .setDefaults(Notification.DEFAULT_ALL)
-                            .setAutoCancel(true)
-                            .extend(new NotificationCompat.WearableExtender().addAction(action))
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText(contentText))
-                    ;
+                    mBuilder.setContentIntent(contentIntent);
+                    NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(NewsActivity.this);
 
-            mBuilder.setContentIntent(contentIntent);
-            NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(this);
+                    mNotificationManager.notify(1, mBuilder.build());
+                }
 
-            mNotificationManager.notify(1, mBuilder.build());
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
         }
     }
 }

@@ -17,6 +17,7 @@
 package com.sokss.feedr.app.model;
 
 import java.io.IOException;
+import java.lang.annotation.Target;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,14 +26,20 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.bumptech.glide.DrawableTypeRequest;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndContent;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.sokss.feedr.app.opengraph.MetaElement;
 import com.sokss.feedr.app.opengraph.OpenGraph;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,8 +57,9 @@ public class News implements Comparable<News> {
     private Boolean mRead = false;
     private Boolean mOgTagParse = false;
     private Feed mFeed = null;
+    private Boolean mNotified = false;
 
-    // private categpry;
+    // private category;
 
 	public News() {
 
@@ -67,6 +75,7 @@ public class News implements Comparable<News> {
         mRead = data.optBoolean("read", false);
         mOgTagParse = data.optBoolean("ogTagParse", false);
         mFeed = feed;
+        mNotified = data.optBoolean("notified", false);
     }
 
     public News(SyndEntry entry, SyndFeed syndFeed) {
@@ -132,6 +141,7 @@ public class News implements Comparable<News> {
             data.put("imageUrl", mImageUrl);
             data.put("read", mRead);
             data.put("ogTagParse", mOgTagParse);
+            data.put("notified", mNotified);
         }
         catch (JSONException je) {
             Log.e(TAG, je.toString());
@@ -173,6 +183,9 @@ public class News implements Comparable<News> {
 	}
 
     public String getImageUrl() {
+        if (!getOgTagParse()) {
+            parseOgTag();
+        }
         return mImageUrl;
     }
 
@@ -180,15 +193,72 @@ public class News implements Comparable<News> {
         this.mImageUrl = imageUrl;
     }
 
-    public Boolean getOgTagParse() {
+    private Boolean getOgTagParse() {
         return mOgTagParse;
     }
 
-    public void setOgTagParse(Boolean ogTagParse) {
-        mOgTagParse = ogTagParse;
+    public Boolean getNotified() {
+        return mNotified;
     }
 
-    public void parseOgTag() {
+    public void setNotified(Boolean notified) {
+        mNotified = notified;
+    }
+
+    public void loadImage(final Context context, final ImageView imageView) {
+        if (!getOgTagParse()) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    parseOgTag();
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    loadInto(context, imageView);
+                }
+            }.execute();
+        }
+        else {
+            loadInto(context, imageView);
+        }
+    }
+
+    public void loadImage(final Context context, final com.squareup.picasso.Target target) {
+        if (!getOgTagParse()) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    parseOgTag();
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    loadInto(context, target);
+                }
+            }.execute();
+        }
+        else {
+            loadInto(context, target);
+        }
+    }
+
+    private void loadInto(final Context context, final ImageView imageView) {
+        Log.d(TAG, "image url: " + mImageUrl);
+        if (context != null && mImageUrl != null && mImageUrl.length() > 0) {
+            Log.d(TAG, "imageView: " + imageView);
+            Picasso.with(context).load(mImageUrl).into(imageView);
+        }
+    }
+
+    private void loadInto(final Context context, final com.squareup.picasso.Target target) {
+        Log.d(TAG, "image url: " + mImageUrl);
+        if (context != null && mImageUrl != null && mImageUrl.length() > 0)
+            Picasso.with(context).load(mImageUrl).into(target);
+    }
+
+    private void parseOgTag() {
         try {
             OpenGraph graph = new OpenGraph(mLink, true);
             String u = graph.getContent("image");
@@ -282,5 +352,4 @@ public class News implements Comparable<News> {
 			return 0;
 		}
 	}
-	
 }

@@ -113,8 +113,6 @@ public class Category {
     }
 
     public long getIntervalValue() {
-//        if (mInterval == -1)
-//            return -1;
 //        if (true)
 //            return 60000;
         switch (mInterval) {

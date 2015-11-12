@@ -162,6 +162,7 @@ public class Feed {
                     news.setFeed(this);
                     if (mNewsList.contains(news)) {
                         news.setRead(mNewsList.get(mNewsList.indexOf(news)).getRead());
+                        news.setNotified(mNewsList.get(mNewsList.indexOf(news)).getNotified());
                     }
                     newsListFeed.add(news);
                     ++max;

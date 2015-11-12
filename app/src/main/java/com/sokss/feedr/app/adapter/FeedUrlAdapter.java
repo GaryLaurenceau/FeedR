@@ -2,9 +2,7 @@ package com.sokss.feedr.app.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +13,8 @@ import android.widget.TextView;
 import com.sokss.feedr.app.CategoryActivity;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.model.Feed;
-import com.sokss.feedr.app.utils.ImageDownloader;
 import com.sokss.feedr.app.utils.ThreadPool;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -69,7 +67,8 @@ public class FeedUrlAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
 
         if (mFeedList.get(position).getThumbnail() != null)
-            mThreadPool.execute(new ThumbnailDownloader(holder.thumbnail, mFeedList.get(position).getThumbnail()));
+            Picasso.with(mContext).load(mFeedList.get(position).getThumbnail()).into(holder.thumbnail);
+
 
         holder.name.setText(Html.fromHtml(mFeedList.get(position).getName()));
         holder.url.setText(mFeedList.get(position).getUrl());
@@ -97,27 +96,4 @@ public class FeedUrlAdapter extends BaseAdapter {
         mFeedList = feedList;
     }
 
-    private class ThumbnailDownloader extends ThreadPool.Worker {
-
-        private ImageView mThumbnailView;
-        private String mUrl;
-
-        public ThumbnailDownloader(ImageView thumbnailView, String url) {
-            mThumbnailView = thumbnailView;
-            mUrl = url;
-        }
-
-        @Override
-        public void command() {
-            final Bitmap bitmap = new ImageDownloader().getBitmap(mUrl);
-            if (mContext != null && bitmap != null) {
-                ((Activity)mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mThumbnailView.setImageBitmap(bitmap);
-                    }
-                });
-            }
-        }
-    }
 }

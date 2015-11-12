@@ -2,7 +2,6 @@ package com.sokss.feedr.app.request;
 
 import android.util.Log;
 
-import com.sokss.feedr.app.cache.MemoryCache;
 import com.sokss.feedr.app.utils.Constants;
 
 import org.apache.http.HttpResponse;
@@ -24,8 +23,6 @@ public class RequestManager {
 
     private static final String TAG = "com.sokss.feedr.app.utils.RequestManager";
     private static DefaultHttpClient client;
-
-    private MemoryCache mMemoryCache = MemoryCache.getInstance();
 
     public RequestManager() {
         final HttpParams params = new BasicHttpParams();

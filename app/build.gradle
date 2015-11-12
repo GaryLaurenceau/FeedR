@@ -18,15 +18,17 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    compileSdkVersion 23
+    buildToolsVersion "23"
+
+    useLibrary  'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "com.sokss.feedr.app"
         minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 21
-        versionName "1.2"
+        targetSdkVersion 23
+        versionCode 24
+        versionName "1.3"
     }
     buildTypes {
         release {
@@ -41,21 +43,23 @@ android {
 }
 
 dependencies {
+
     // Common libs
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Wear app project
-//    wearApp project(':wear')
-//    debugWearApp project(path:':wear', configuration: 'debug')
-//    releaseWearApp project(path:':wear', configuration: 'release')
+    //    wearApp project(':wear')
+    //    debugWearApp project(path:':wear', configuration: 'debug')
+    //    releaseWearApp project(path:':wear', configuration: 'release')
 
-    compile 'com.android.support:appcompat-v7:21.0.0'
-    compile 'com.android.support:support-v4:21.0.+'
-    compile 'com.android.support:support-v13:21.0.0'
-    compile 'com.google.android.gms:play-services-wearable:6.5.87'
+    // Compat
+    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:support-v4:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:support-v13:23.1.0'
+    compile 'com.google.android.gms:play-services-wearable:8.1.0'
 
     // Pull to refresh library
-
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
 
     // ROME rss feed library
@@ -74,23 +78,19 @@ dependencies {
     }
     compile files('libs/hamcrest-core.jar')
     compile files('libs/htmlcleaner-2.8.jar')
-    // Sugar ORM for database management
-    //    compile 'com.github.satyan:sugar:1.3'
-    //    compile files('libs/commons-collections4-4.0.jar')
 
     // Showcase library
-//    compile 'com.github.amlcurran.showcaseview:library:+'
+    //    compile 'com.github.amlcurran.showcaseview:library:+'
 
     // Parallax effect
     compile 'com.fmsirvent:parallaxeverywhere:1.+'
 
     // Floating button
     compile 'com.getbase:floatingactionbutton:1.8.0'
+
     // Swipe to finish ctivity
     compile project(':slidr')
-
-
-    compile ('org.apache.httpcomponents:httpmime:4.3.5') {
+    compile('org.apache.httpcomponents:httpmime:4.3.5') {
         // avoid "is ignored for the default configuration X" warnings
         // since httpclient is included in the android SDK.
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
@@ -98,5 +98,11 @@ dependencies {
 
     // Image loader
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
 
+    // ImageView manipulation
+    compile 'com.commit451:PhotoView:1.2.4'
+
+    // SnackBar
+    compile 'com.nispok:snackbar:2.11.+'
 }

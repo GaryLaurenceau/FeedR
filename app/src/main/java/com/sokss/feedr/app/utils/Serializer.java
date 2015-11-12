@@ -69,10 +69,12 @@ public class Serializer extends Observable {
             }
             catch (IOException ioe) {
                 Log.e(TAG, ioe.toString());
+                ioe.printStackTrace();
             }
             catch (JSONException je) {
                 Log.e(TAG, categoryString);
                 Log.e(TAG, je.toString());
+                je.printStackTrace();
             }
         }
 

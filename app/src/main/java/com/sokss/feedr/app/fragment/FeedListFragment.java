@@ -9,18 +9,15 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,11 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-//import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-//import com.github.amlcurran.showcaseview.ShowcaseView;
-//import com.github.amlcurran.showcaseview.targets.Target;
 import com.sokss.feedr.app.FeedActivity;
 import com.sokss.feedr.app.NewsActivity;
 import com.sokss.feedr.app.R;
@@ -48,7 +41,6 @@ import com.sokss.feedr.app.utils.Constants;
 import com.sokss.feedr.app.utils.Serializer;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
@@ -358,9 +350,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
             }
         }.start();
         if (mRead)
-            showToast(getResources().getString(R.string.all_news_set_read));
+            showSnack(getResources().getString(R.string.all_news_set_read));
         else
-            showToast(getResources().getString(R.string.all_news_set_unread));
+            showSnack(getResources().getString(R.string.all_news_set_unread));
     }
 
     public void displayShowcaseViewOne() {
@@ -519,9 +511,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
         mCategory = category;
     }
 
-    private void showToast(String content) {
+    private void showSnack(String content) {
         if (getActivity() != null && content != null)
-            Toast.makeText(getActivity(), content, Toast.LENGTH_SHORT).show();
+            Snackbar.make(getActivity().findViewById(android.R.id.content), content, Snackbar.LENGTH_SHORT).show();
     }
 
     private void popupSetAlarm() {
@@ -556,14 +548,10 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
         intent.putExtra("category_key", mCategory.getKey());
         intent.putExtra("category_interval", mCategory.getIntervalValue());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), mCategory.getKey().intValue(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-//        calendar.add(Calendar.SECOND, 10);
         AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarm.cancel(pendingIntent);
-        Log.d(TAG, mCategory.getKey().toString());
         if (mCategory.getIntervalValue() >= 0) {
-            alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_FIFTEEN_MINUTES, mCategory.getIntervalValue(), pendingIntent);
+            alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_DAY, mCategory.getIntervalValue(), pendingIntent);
         }
     }
 
@@ -609,7 +597,11 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
     @Override
     public void update(Observable observable, Object data) {
         if (data instanceof Category) {
-            if (!((Category)data).getKey().equals(mCategory.getKey()))
+            Category category = (Category) data;
+            if (category.getKey() == null || mCategory.getKey() == null) {
+                return;
+            }
+            if (!category.getKey().equals(mCategory.getKey()))
                 return;
             if (getActivity() != null)
                 getActivity().runOnUiThread(new Runnable() {

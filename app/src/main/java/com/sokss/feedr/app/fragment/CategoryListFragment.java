@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
 //import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
@@ -23,7 +20,6 @@ import com.sokss.feedr.app.CategoryActivity;
 import com.sokss.feedr.app.MainActivity;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.adapter.CategoryAdapter;
-import com.sokss.feedr.app.database.DataStorage;
 import com.sokss.feedr.app.model.Category;
 import com.sokss.feedr.app.utils.ColorManager;
 import com.sokss.feedr.app.utils.Constants;
@@ -162,11 +158,6 @@ public class CategoryListFragment extends Fragment {
             useless.setVisibility(View.GONE);
             count.setVisibility(View.GONE);
         }
-    }
-
-    private void showToast(String content) {
-        if (content != null)
-            Toast.makeText(getActivity(), content, Toast.LENGTH_SHORT).show();
     }
 
     private void showcase() {

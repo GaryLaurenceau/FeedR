@@ -48,7 +48,9 @@
         <activity
             android:name=".ViewImageActivity"
             android:label="@string/title_activity_view_image"
-            android:parentActivityName=".NewsActivity" >
+            android:parentActivityName=".NewsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            >
         </activity>
         <activity
             android:name=".SettingsActivity"

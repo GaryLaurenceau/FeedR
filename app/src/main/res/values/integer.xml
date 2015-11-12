@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer name="transition_time">400</integer>
+    <integer name="transition_time">250</integer>
     <item type="id" name="action_read" />
     <item type="id" name="action_unread" />
     <item type="id" name="action_set_alarm" />

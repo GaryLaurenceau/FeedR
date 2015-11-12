@@ -8,6 +8,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,12 +25,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -37,7 +35,6 @@ import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.ViewImageActivity;
 import com.sokss.feedr.app.model.News;
 import com.sokss.feedr.app.utils.Constants;
-import com.sokss.feedr.app.utils.ImageDownloader;
 import com.sokss.feedr.app.utils.ThreadPool;
 import com.sokss.feedr.app.utils.URLImageParser;
 
@@ -49,6 +46,8 @@ import java.util.List;
 
 import com.sokss.feedr.app.fadeActionBar.NotifyingScrollView;
 import com.sokss.feedr.app.utils.Utils;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * Created by gary on 25/11/14.
@@ -88,9 +87,6 @@ public class NewsFragment extends Fragment {
 
     // Activity
     private NewsActivity mNewsActivity;
-
-    // Utils
-    private ThreadPool mThreadPool = ThreadPool.getInstance();
 
     public NewsFragment() {
     }
@@ -159,7 +155,9 @@ public class NewsFragment extends Fragment {
     private void setActionBarTextAlpha(int alpha) {
         int titleId = getResources().getIdentifier("action_bar_title", "id", "android");
         TextView abTitle = (TextView) mNewsActivity.findViewById(titleId);
-        abTitle.setTextColor(Color.argb(alpha, 255, 255, 255));
+        if (abTitle != null) {
+            abTitle.setTextColor(Color.argb(alpha, 255, 255, 255));
+        }
     }
 
     private Drawable.Callback mDrawableCallback = new Drawable.Callback() {
@@ -194,20 +192,29 @@ public class NewsFragment extends Fragment {
     }
 
     private void setNewsContent() {
-        loadImage();
+        Drawable drawable = getResources().getDrawable(R.drawable.header_news);
+        drawable.setColorFilter(mColor, PorterDuff.Mode.MULTIPLY);
+        mImageHeader.setImageDrawable(drawable);
 
-////        mWebView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-////        String content = mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent();
-////        Utils.trimTrailingWhitespace(content);
+        if (getActivity() != null) {
+            Log.d("LOAD", mImageHeader.toString());
+            mNews.loadImage(getActivity(), new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    mImageHeader.setImageBitmap(createSquaredBitmap(bitmap));
+                }
 
-//        mWebView.setWebViewClient(new WebViewClient());
-//        mWebView.setWebChromeClient(new WebChromeClient());
-//        mWebView.getSettings().setJavaScriptEnabled(true);
-//        mWebView.getSettings().setAppCacheEnabled(true);
-//        mWebView.getSettings().setBuiltInZoomControls(false);
-//        mWebView.getSettings().setSaveFormData(true);
-//        mWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
-//        mWebView.loadData("<iframe width='200' height='143' src='http://www.youtube.com/embed/JW5meKfy3fY' frameborder='0' allowfullscreen></iframe>", "text/html", "utf-8");
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
+        }
 
         String content = mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent();
         Log.d("BASE_HTML", content);
@@ -215,13 +222,9 @@ public class NewsFragment extends Fragment {
         Log.d("HTML", html.toString());
         mContent.setText(Utils.trimTrailingWhitespace(html));
 
-        mImageHeader.setImageDrawable(getResources().getDrawable(R.drawable.header_news));
-        mImageHeader.setColorFilter(mColor);
-
-
         mTitle.setText(mNews.getTitle());
         mLink.setText(mNews.getLink());
-        mDate.setText(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", mNews.getPubDate()));
+        mDate.setText(android.text.format.DateFormat.format("EEEE MMMM yyyy hh:mm", mNews.getPubDate()));
 
         mLink.setLinkTextColor(mColor);
         Linkify.addLinks(mLink, Linkify.ALL);
@@ -247,49 +250,6 @@ public class NewsFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ViewImageActivity.class);
                 intent.putExtra("bitmap_url", mNews.getImageUrl());
                 startActivity(intent);
-            }
-        });
-    }
-
-    private void loadImage() {
-        mThreadPool.execute(new ThreadPool.Worker() {
-            @Override
-            public void command() {
-                try {
-                    Thread.sleep(500);
-
-                    // Check if fragment is visible
-                    if (getActivity() == null || !((NewsActivity)getActivity()).isFragmentNeedBeLoaded(mPosition))
-                        return;
-
-                    // Get cover picture
-                    if (!mNews.getOgTagParse())
-                        mNews.parseOgTag();
-
-                    // Download cover picture
-                    final Bitmap bitmap = new ImageDownloader().getBitmap(mNews.getImageUrl());
-
-                    // Display cover picture
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (bitmap != null && mImageHeader != null) {
-                                    try {
-                                        mImageHeader.setImageBitmap(createSquaredBitmap(bitmap));
-                                    }
-                                    catch (OutOfMemoryError ooe) {
-                                        System.gc();
-                                        Log.e(TAG, ooe.toString());
-                                    }
-                                    mImageHeader.setColorFilter(null);
-                                }
-                            }
-                        });
-                }
-                catch (InterruptedException ie) {
-                    Log.e(TAG, ie.toString());
-                }
             }
         });
     }

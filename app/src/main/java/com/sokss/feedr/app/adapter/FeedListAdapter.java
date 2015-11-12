@@ -1,9 +1,7 @@
 package com.sokss.feedr.app.adapter;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +14,7 @@ import android.widget.TextView;
 import com.sokss.feedr.app.R;
 import com.sokss.feedr.app.fragment.FeedListFragment;
 import com.sokss.feedr.app.model.News;
-import com.sokss.feedr.app.utils.ImageDownloader;
-import com.sokss.feedr.app.utils.ThreadPool;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,6 @@ public class FeedListAdapter extends BaseAdapter implements Filterable {
     private List<News> mNewsListBase;
     private List<News> mNewsList;
     private LayoutInflater mInflater;
-    private ThreadPool mThreadPool = ThreadPool.getInstance();
 
     public FeedListAdapter(Activity activity, FeedListFragment fragment, List<News> newsList) {
         mActivity = activity;
@@ -79,8 +75,7 @@ public class FeedListAdapter extends BaseAdapter implements Filterable {
         holder.imageView.setImageDrawable(null);
 
         // Download image
-        Runnable worker = new FeedListAdapterWorker(holder, news, position);
-        mThreadPool.execute(worker);
+        news.loadImage(mActivity, holder.imageView);
 
         holder.title.setText(news.getTitle());
         holder.date.setText(news.getFormatDate());
@@ -137,55 +132,5 @@ public class FeedListAdapter extends BaseAdapter implements Filterable {
     public void setNewsList(List<News> newsList) {
         mNewsListBase = newsList;
         mNewsList = mNewsListBase;
-    }
-
-    private class FeedListAdapterWorker extends ThreadPool.Worker {
-
-        private ViewHolder mViewHolder;
-        private News mNews;
-        private Integer mPosition;
-
-        public FeedListAdapterWorker(ViewHolder viewHolder, News news, int position) {
-            mViewHolder = viewHolder;
-            mNews = news;
-            mPosition = position;
-        }
-
-        @Override
-        public void command() {
-            try {
-                Thread.sleep(500);
-
-                // Check if item listview is visible
-                if (!mFeedListFragment.isItemVisible(mPosition) || !mNewsList.contains(mNews)) {
-                    return;
-                }
-
-//                if (mFeedListFragment.isSliding())
-//                    return;
-                while (mFeedListFragment.isSliding())
-                    Thread.sleep(50);
-
-                // Get cover picture
-                if (!mNews.getOgTagParse())
-                    mNews.parseOgTag();
-
-                // Download cover picture
-                final Bitmap bitmap = new ImageDownloader().getBitmap(mNews.getImageUrl());
-
-                // Display cover picture
-                if (mActivity != null)
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (bitmap != null && mViewHolder != null && mViewHolder.imageView != null)
-                                mViewHolder.imageView.setImageBitmap(bitmap);
-                        }
-                    });
-            }
-            catch (InterruptedException ie) {
-                Log.d(TAG, ie.toString());
-            }
-        }
     }
 }

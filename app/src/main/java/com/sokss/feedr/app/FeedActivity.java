@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
 
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
@@ -107,11 +106,6 @@ public class FeedActivity extends Activity {
                 break;
             default:
         }
-    }
-
-    private void showToast(String content) {
-        if (content != null)
-            Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
     @Override
