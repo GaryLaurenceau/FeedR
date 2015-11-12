@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
@@ -163,7 +162,7 @@ public class NewsActivity extends Activity {
                 }
                 else {
                     mSerializer.addNewsToFavorite(this, current);
-                    showSnack('"' + current.getTitle() + "\" " + getResources().getString(R.string.add_to_favorite));
+                    showSnack(getResources().getString(R.string.add_to_favorite));
                 }
                 invalidateOptionsMenu();
                 return true;
@@ -237,9 +236,10 @@ public class NewsActivity extends Activity {
         return false;
     }
 
-    private void showSnack(String text) {
-        if (text != null)
-            Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show();
+    private void showSnack(String content) {
+        if (content != null) {
+            com.nispok.snackbar.Snackbar.with(getApplicationContext()).text(content).show(this);
+        }
     }
 
     private void end() {

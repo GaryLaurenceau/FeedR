@@ -44,7 +44,7 @@
     </string-array>
 
     <!-- News Activity -->
-    <string name="add_to_favorite">a été ajouté au favoris</string>
+    <string name="add_to_favorite">Ajouté aux favoris</string>
     <string name="remove_from_favorite">Supprimer des favoris</string>
 
     <!--Category Activity-->

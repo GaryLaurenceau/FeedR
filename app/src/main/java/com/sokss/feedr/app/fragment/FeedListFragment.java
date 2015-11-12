@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +28,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.nispok.snackbar.Snackbar;
 import com.sokss.feedr.app.FeedActivity;
 import com.sokss.feedr.app.NewsActivity;
 import com.sokss.feedr.app.R;
@@ -512,8 +512,9 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
     }
 
     private void showSnack(String content) {
-        if (getActivity() != null && content != null)
-            Snackbar.make(getActivity().findViewById(android.R.id.content), content, Snackbar.LENGTH_SHORT).show();
+        if (getActivity() != null && content != null) {
+            Snackbar.with(getActivity()).text(content).show(getActivity());
+        }
     }
 
     private void popupSetAlarm() {

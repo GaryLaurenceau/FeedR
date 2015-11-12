@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sokss.feedr.app"
     android:installLocation="auto"
-    android:versionCode="21"
-    android:versionName="1.2" >
+    android:versionCode="24"
+    android:versionName="1.3" >
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -48,6 +48,7 @@
         </activity>
         <activity
             android:name="com.sokss.feedr.app.ViewImageActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_view_image"
             android:parentActivityName="com.sokss.feedr.app.NewsActivity" >
         </activity>

@@ -9,11 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -29,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nispok.snackbar.Snackbar;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
@@ -48,7 +45,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CategoryActivity extends Activity {
 
@@ -312,7 +308,7 @@ public class CategoryActivity extends Activity {
     }
 
     private void showSnack(final String content) {
-        Snackbar.make(findViewById(android.R.id.content), content, Snackbar.LENGTH_SHORT).show();
+        Snackbar.with(getApplicationContext()).text(content).show(this);
     }
 
     public void closeKeyBoard(EditText editText) {

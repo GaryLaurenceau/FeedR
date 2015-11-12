@@ -8,53 +8,53 @@ package fr.castorflex.android.smoothprogressbar;
 
 public final class R {
 	public static final class attr {
-		public static final int spbStyle = 0x7f010063;
-		public static final int spb_background = 0x7f010070;
-		public static final int spb_color = 0x7f010064;
-		public static final int spb_colors = 0x7f01006e;
-		public static final int spb_generate_background_with_colors = 0x7f010071;
-		public static final int spb_interpolator = 0x7f01006b;
-		public static final int spb_mirror_mode = 0x7f01006d;
-		public static final int spb_progressiveStart_activated = 0x7f01006f;
-		public static final int spb_progressiveStart_speed = 0x7f010069;
-		public static final int spb_progressiveStop_speed = 0x7f01006a;
-		public static final int spb_reversed = 0x7f01006c;
-		public static final int spb_sections_count = 0x7f010067;
-		public static final int spb_speed = 0x7f010068;
-		public static final int spb_stroke_separator_length = 0x7f010066;
-		public static final int spb_stroke_width = 0x7f010065;
+		public static final int spbStyle = 0x7f010096;
+		public static final int spb_background = 0x7f0100a3;
+		public static final int spb_color = 0x7f010097;
+		public static final int spb_colors = 0x7f0100a1;
+		public static final int spb_generate_background_with_colors = 0x7f0100a4;
+		public static final int spb_interpolator = 0x7f01009e;
+		public static final int spb_mirror_mode = 0x7f0100a0;
+		public static final int spb_progressiveStart_activated = 0x7f0100a2;
+		public static final int spb_progressiveStart_speed = 0x7f01009c;
+		public static final int spb_progressiveStop_speed = 0x7f01009d;
+		public static final int spb_reversed = 0x7f01009f;
+		public static final int spb_sections_count = 0x7f01009a;
+		public static final int spb_speed = 0x7f01009b;
+		public static final int spb_stroke_separator_length = 0x7f010099;
+		public static final int spb_stroke_width = 0x7f010098;
 	}
 	public static final class bool {
-		public static final int spb_default_mirror_mode = 0x7f090006;
-		public static final int spb_default_progressiveStart_activated = 0x7f090007;
-		public static final int spb_default_reversed = 0x7f090008;
+		public static final int spb_default_mirror_mode = 0x7f0a000a;
+		public static final int spb_default_progressiveStart_activated = 0x7f0a000b;
+		public static final int spb_default_reversed = 0x7f0a000c;
 	}
 	public static final class color {
-		public static final int spb_default_color = 0x7f0d004d;
+		public static final int spb_default_color = 0x7f0e0061;
 	}
 	public static final class dimen {
-		public static final int spb_default_stroke_separator_length = 0x7f0a003a;
-		public static final int spb_default_stroke_width = 0x7f0a003b;
+		public static final int spb_default_stroke_separator_length = 0x7f0b0080;
+		public static final int spb_default_stroke_width = 0x7f0b0081;
 	}
 	public static final class id {
-		public static final int spb_interpolator_accelerate = 0x7f0e0038;
-		public static final int spb_interpolator_acceleratedecelerate = 0x7f0e0039;
-		public static final int spb_interpolator_decelerate = 0x7f0e003a;
-		public static final int spb_interpolator_linear = 0x7f0e003b;
+		public static final int spb_interpolator_accelerate = 0x7f0f0051;
+		public static final int spb_interpolator_acceleratedecelerate = 0x7f0f0052;
+		public static final int spb_interpolator_decelerate = 0x7f0f0053;
+		public static final int spb_interpolator_linear = 0x7f0f0054;
 	}
 	public static final class integer {
-		public static final int spb_default_interpolator = 0x7f0b0002;
-		public static final int spb_default_sections_count = 0x7f0b0003;
+		public static final int spb_default_interpolator = 0x7f0d0006;
+		public static final int spb_default_sections_count = 0x7f0d0007;
 	}
 	public static final class string {
-		public static final int spb_default_speed = 0x7f070063;
+		public static final int spb_default_speed = 0x7f080070;
 	}
 	public static final class style {
-		public static final int SmoothProgressBar = 0x7f0c0019;
-		public static final int Theme_SmoothProgressBarDefaults = 0x7f0c00b6;
+		public static final int SmoothProgressBar = 0x7f0c001d;
+		public static final int Theme_SmoothProgressBarDefaults = 0x7f0c00f9;
 	}
 	public static final class styleable {
-		public static final int[] SmoothProgressBar = { 0x7f010063, 0x7f010064, 0x7f010065, 0x7f010066, 0x7f010067, 0x7f010068, 0x7f010069, 0x7f01006a, 0x7f01006b, 0x7f01006c, 0x7f01006d, 0x7f01006e, 0x7f01006f, 0x7f010070, 0x7f010071 };
+		public static final int[] SmoothProgressBar = { 0x7f010096, 0x7f010097, 0x7f010098, 0x7f010099, 0x7f01009a, 0x7f01009b, 0x7f01009c, 0x7f01009d, 0x7f01009e, 0x7f01009f, 0x7f0100a0, 0x7f0100a1, 0x7f0100a2, 0x7f0100a3, 0x7f0100a4 };
 		public static final int SmoothProgressBar_spbStyle = 0;
 		public static final int SmoothProgressBar_spb_background = 13;
 		public static final int SmoothProgressBar_spb_color = 1;
