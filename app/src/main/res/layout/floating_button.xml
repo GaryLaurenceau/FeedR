@@ -1,0 +1,63 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/shader"
+        android:background="@color/overlay_white"
+        android:animateLayoutChanges="true"
+        android:clickable="true"
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/menu_wraper"
+        >
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/multiple_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            fab:fab_addButtonColorNormal="@color/white"
+            fab:fab_addButtonColorPressed="@color/white_pressed"
+            fab:fab_addButtonPlusIconColor="@color/dark_gray"
+            fab:fab_labelStyle="@style/menu_labels_style"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            >
+
+            <com.getbase.floatingactionbutton.AddFloatingActionButton
+                android:id="@+id/action_add_category"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                fab:fab_plusIconColor="@color/dark_gray"
+                fab:fab_colorNormal="@color/white"
+                fab:fab_colorPressed="@color/white_pressed"
+                fab:fab_title="@string/action_add_category"
+                />
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_show_credits"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                fab:fab_icon="@drawable/ic_credit"
+                fab:fab_title="@string/credits"
+                fab:fab_colorPressed="@color/white_pressed"
+                fab:fab_colorNormal="@color/white"
+                />
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    </RelativeLayout>
+
+</RelativeLayout>

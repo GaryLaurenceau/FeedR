@@ -1,0 +1,124 @@
+{
+    "cathegory_list": [
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://feeds.mashable.com/Mashable",
+                    "name": "TED Talks - Mashable"
+                }
+            ],
+            "interval": 0,
+            "color": 1,
+            "key": 3,
+            "name": "TED"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://techcrunch.com/feed/",
+                    "thumbnail": "http://1.gravatar.com/blavatar/d9ea925a71f82f06a1e6224298f7fe80?s=96&d=http%3A%2F%2Fs2.wp.com%2Fi%2Fbuttonw-com.png",
+                    "name": "TechCrunch - The latest technology news and information on startups"
+                }
+            ],
+            "interval": 0,
+            "color": 3,
+            "key": 5,
+            "name": "TechCrunch"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+                    "thumbnail": "http://graphics8.nytimes.com/images/misc/NYT_logo_rss_250x40.png",
+                    "name": "New York Times Home Page"
+                }
+            ],
+            "interval": 0,
+            "color": 6,
+            "key": 7,
+            "name": "New York Times"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://feeds.feedburner.com/dezeen",
+                    "name": "Dezen"
+                }
+            ],
+            "interval": 0,
+            "color": 2,
+            "key": 8,
+            "name": "Dezen"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://www.theverge.com/rss/frontpage",
+                    "name": "The Verge | Front Page"
+                }
+            ],
+            "interval": 0,
+            "color": 4,
+            "key": 9,
+            "name": "The Verge"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://korben.info/feed",
+                    "name": "<b>Korben</b> - Upgrade your mind"
+                }
+            ],
+            "interval": 4,
+            "color": 5,
+            "key": 1424100372495,
+            "name": "Korben"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://www.lemonde.fr/rss/une.xml",
+                    "thumbnail": "http://www.lemonde.fr/mmpub/img/lgo/lemondefr_rss.gif",
+                    "name": "<b>Le Monde</b>.fr - Actualité à la Une"
+                }
+            ],
+            "interval": 2,
+            "color": 7,
+            "key": 1424100758087,
+            "name": "Le monde"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http://www.presse-citron.net/feed/",
+                    "name": "<b>Presse</b>-<b>citron</b> - L&#39;actualité du Web et des nouvelles technologies"
+                }
+            ],
+            "interval": 4,
+            "color": 8,
+            "key": 1424100785886,
+            "name": "Presse Citron"
+        },
+        {
+            "feeds": [
+                {
+                    "news": [],
+                    "url": "http:\/\/feedpress.me\/frandroid",
+                    "name": "<b>FrAndroid</b> - Communauté mobile Android"
+                }
+            ],
+            "interval": 3,
+            "color": 3,
+            "key": 1424102346319,
+            "name": "FrAndroid"
+        }
+    ]
+}
