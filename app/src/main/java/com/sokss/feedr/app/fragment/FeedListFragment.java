@@ -520,6 +520,7 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
     private void popupSetAlarm() {
         CharSequence[] choices = getResources().getStringArray(R.array.interval_time);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        Log.d("INTERVAL", mCategory.getInterval() + "");
         builder.setTitle(R.string.choose_time_interval)
                 .setSingleChoiceItems(choices, mCategory.getInterval(), new DialogInterface.OnClickListener() {
                     @Override
@@ -552,21 +553,24 @@ public class FeedListFragment extends Fragment implements OnRefreshListener, Obs
         AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarm.cancel(pendingIntent);
         if (mCategory.getIntervalValue() >= 0) {
-            alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_DAY, mCategory.getIntervalValue(), pendingIntent);
+            alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + mCategory.getIntervalValue(), mCategory.getIntervalValue(), pendingIntent);
         }
     }
 
     private void setDefaultAlarm() {
-        if (mCategory == null)
+        if (mCategory == null) {
             return;
+        }
 
         // Do not set alarm for "All" category
-        if (mCategory.getKey() < 0)
+        if (mCategory.getKey() < 0) {
             return;
+        }
 
         // Do not set default alarm if it already sets
-        if (mCategory.getInterval() != -2)
+        if (mCategory.getInterval() != -2) {
             return;
+        }
 
         mCategory.setInterval(2);
         setAlarmReceiver();
