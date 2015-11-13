@@ -121,9 +121,9 @@ public class AlarmService extends IntentService {
                     String contentText = content.toString().trim();
                     NotificationCompat.Builder mBuilder =
                             new NotificationCompat.Builder(AlarmService.this)
-                                    .setSmallIcon(R.drawable.ic_launcher)
+                                    .setSmallIcon(R.drawable.ic_notification)
                                     .setColor(getResources().getColor(R.color.blue))
-//                                    .setLargeIcon(bitmap)
+                                    .setLargeIcon(bitmap)
                                     .setContentTitle(categoryName)
                                     .setContentText(contentText)
                                     .setDefaults(Notification.DEFAULT_ALL)

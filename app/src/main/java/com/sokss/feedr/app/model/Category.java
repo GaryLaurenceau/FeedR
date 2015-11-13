@@ -40,7 +40,7 @@ public class Category {
             for (int i = 0; i < array.length(); ++i)
                 mFeeds.add(new Feed(array.getJSONObject(i), this));
             mColor = data.getInt("color");
-            mInterval = data.optInt("interval", 0);
+            mInterval = data.optInt("interval", -2);
         }
         catch (JSONException je) {
             Log.e(TAG, je.toString());

@@ -72,7 +72,7 @@ public class Serializer extends Observable {
                 ioe.printStackTrace();
             }
             catch (JSONException je) {
-                Log.e(TAG, categoryString);
+                Log.e(TAG, "getCategoriesFromPreferences" + categoryString);
                 Log.e(TAG, je.toString());
                 je.printStackTrace();
             }
@@ -90,20 +90,24 @@ public class Serializer extends Observable {
                 }
             }
             catch (JSONException je) {
+                Log.e(TAG, "getCategoriesFromPreferences else part" + categoryString);
                 Log.e(TAG, je.toString());
+                je.printStackTrace();
             }
         }
 
-        String favorite = sharedPreferences.getString(Constants.FAVORITE_NEWS, "");
-        if (favorite != null)
+        String favorite = sharedPreferences.getString(Constants.FAVORITE_NEWS, null);
+        if (favorite != null) {
             try {
                 JSONObject json = new JSONObject(favorite);
                 mFavorite = new Category(json);
                 mFavorite.setName(context.getResources().getString(R.string.favorite));
-            }
-            catch (JSONException je) {
+            } catch (JSONException je) {
+                Log.e(TAG, "getCategoriesFromPreferences favorite != null" + categoryString);
                 Log.e(TAG, je.toString());
+                je.printStackTrace();
             }
+        }
         return mCathegories;
     }
 

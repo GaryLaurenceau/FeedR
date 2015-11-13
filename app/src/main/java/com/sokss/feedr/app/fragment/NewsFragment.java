@@ -197,7 +197,6 @@ public class NewsFragment extends Fragment {
         mImageHeader.setImageDrawable(drawable);
 
         if (getActivity() != null) {
-            Log.d("LOAD", mImageHeader.toString());
             mNews.loadImage(getActivity(), new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -217,9 +216,7 @@ public class NewsFragment extends Fragment {
         }
 
         String content = mNews.getContent().equals("") ? mNews.getDescription() : mNews.getContent();
-        Log.d("BASE_HTML", content);
         Spanned html = Html.fromHtml(content, new URLImageParser(mContent, getActivity()), new MyTaghandler());
-        Log.d("HTML", html.toString());
         mContent.setText(Utils.trimTrailingWhitespace(html));
 
         mTitle.setText(mNews.getTitle());
@@ -378,8 +375,6 @@ public class NewsFragment extends Fragment {
     private class MyTaghandler implements Html.TagHandler {
         @Override
         public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
-            Log.d(TAG, tag);
-            Log.d(TAG, opening ? "opening" : "closing");
         }
     }
 }
